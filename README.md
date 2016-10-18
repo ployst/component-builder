@@ -1,4 +1,4 @@
-# Componentn Builder
+# Component Builder
 
 This is the builder used to determine what needs to be tested and deployed.
 
