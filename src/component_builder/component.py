@@ -1,4 +1,3 @@
-from ConfigParser import ConfigParser
 from .utils import convert_dict_to_env_string
 
 class Component(object):
@@ -82,22 +81,3 @@ class Tree(object):
             branches.append(branch)
 
         return cls.merge_branches(*branches)
-
-
-def read_component_configuration(builder_ini_file):
-    config = ConfigParser(defaults={
-        'downstream': '',
-        'release-process': ''
-    })
-    config.readfp(builder_ini_file)
-
-    for component in config.sections():
-        kwargs = {
-            'title': component,
-            'release_process': config.get(component, 'release-process'),
-            'path': config.get(component, 'path')
-        }
-        downstream = config.get(component, 'downstream')
-        if downstream:
-            kwargs['downstream'] = downstream.split(',')
-        Component(**kwargs)

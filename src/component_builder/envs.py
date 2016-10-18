@@ -15,16 +15,10 @@ def ensure_report_location(comp_name):
 def env_dependent_overrides(component):
     envvars = {}
 
-    # TODO: builder.ini needs to have a section that defines lots of things
-    # include this there
-    if os.environ.get('CIRCLECI'):
-        override_filename = os.path.join(
-            component.path, 'adi', 'envs', 'circle'
-        )
-    else:
-        override_filename = os.path.join(
-            component.path, 'adi', 'envs', 'local'
-        )
+    override_filename = os.path.join(
+        component.path, 'envs', os.environ('ENVIRONMENT')
+    )
+
     if os.path.exists(override_filename):
         with open(override_filename, 'r') as f:
             for line in f.read().splitlines():

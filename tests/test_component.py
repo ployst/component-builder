@@ -2,9 +2,8 @@ import unittest
 from StringIO import StringIO
 from textwrap import dedent
 
-from component_builder.component import (
-    Component, Tree, read_component_configuration
-)
+from component_builder.component import Component, Tree
+from component_builder.config import read_component_configuration
 
 
 class TestDependencyTree(unittest.TestCase):

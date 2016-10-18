@@ -18,13 +18,13 @@ import os
 
 from docopt import docopt
 
-from . import build, conf, discover, envs, github, release
+from . import build, config, discover, envs, github, release
 
 
 def cli():
     arguments = docopt(__doc__, version='1.0')
 
-    conf.read_component_configuration(open('builder.ini'))
+    config.read_component_configuration(open('builder.ini'))
 
     components = discover.run(arguments.get('<component>', []))
     envs.set_envs(components)

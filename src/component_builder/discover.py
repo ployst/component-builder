@@ -19,7 +19,7 @@ def run(components=None):
     else:
         candidates = Component.all.values()
         # If we're on master, we'll do everything.
-        if os.environ.get('BRANCH_NAME', '') not in ('master',):
+        if os.environ.get('BUILD_BRANCH', '') not in ('master',):
             candidates = get_changed(candidates)
         candidates = Tree.ordered(candidates)
     return candidates
