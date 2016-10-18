@@ -1,0 +1,6 @@
+-r runtime.txt
+
+nose==1.3.7
+mock==1.3.0
+funcsigs==0.4  # mock relies on this but doesn't pull it in.
+flake8==2.5.4  # commit hooks rely on this

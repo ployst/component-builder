@@ -1,0 +1,4 @@
+bash>=0.5
+docopt
+github3.py>=1.0.0a3
+pytz>=2015.4
