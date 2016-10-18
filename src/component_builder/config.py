@@ -4,7 +4,7 @@ from ConfigParser import ConfigParser
 from .component import Component
 
 
-def read_component_configuration(builder_ini_file, root):
+def read_component_configuration(builder_ini_file, root='.'):
     config = ConfigParser(defaults={
         'downstream': '',
         'release-process': ''

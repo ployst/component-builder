@@ -1,5 +1,6 @@
 from .utils import convert_dict_to_env_string
 
+
 class Component(object):
 
     all = {}
@@ -52,7 +53,6 @@ class Tree(object):
             right = branches[1]
             rest = branches[2:]
             left_root = left[0]
-            right_root = right[0]
 
             if left_root in right:
                 first = right
