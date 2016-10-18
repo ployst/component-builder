@@ -16,7 +16,7 @@ def env_dependent_overrides(component):
     envvars = {}
 
     override_filename = os.path.join(
-        component.path, 'envs', os.environ('ENVIRONMENT')
+        component.path, 'envs', os.environ.get('ENVIRONMENT', 'CI')
     )
 
     if os.path.exists(override_filename):

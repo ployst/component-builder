@@ -35,12 +35,10 @@ def mark_commit_status(*args, **kwargs):
 
 def declare_component_usage(title):
     if os.environ.get('INTERACT_WITH_GITHUB'):
-        env_name = os.environ.get('ENV_PULL_REQUEST_NAMES')
-        if env_name:
-            prs = os.environ.get(env_name, '')
-            for pr_url in prs.split(','):
-                if pr_url:
-                    github.add_component_label(pr_url, title)
+        prs = os.environ.get('PULL_REQUEST_NAMES', '')
+        for pr_url in prs.split(','):
+            if pr_url:
+                github.add_component_label(pr_url, title)
 
 
 def command_exists(makefile, command):

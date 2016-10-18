@@ -27,8 +27,8 @@ INTERACT_WITH_GITHUB
     If set, the build will attempt to post commit updates on per-component
     stages, and add component labels if this is for a PR.
 
-ENV_PULL_REQUEST_NAMES
-    The name of the environment variable to look up a PR name in.
+PULL_REQUEST_NAMES
+    The name of the pull requests this commit is in
 
 BUILD_SHA
     The sha of the built commit
