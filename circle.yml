@@ -1,0 +1,29 @@
+machine:
+  timezone:
+    Etc/UTC
+
+  python:
+    version: 2.7.11
+
+  environment:
+
+    RELEASE_TAG: 1.$CIRCLE_BUILD_NUM
+    CENTRAL_REPORT_LOCATION: $CIRCLE_TEST_REPORTS
+
+dependencies:
+  override:
+    - pip install -e .
+    - pip freeze
+    - compbuild discover  # just to output what will be built
+    - compbuild build
+
+test:
+  override:
+    - compbuild test
+
+deployment:
+  production: # just a label; label names are completely up to you
+    branch: master
+    commands:
+      - compbuild release
+      - compbuild tag
