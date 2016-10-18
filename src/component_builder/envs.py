@@ -16,9 +16,8 @@ def env_dependent_overrides(component):
     envvars = {}
 
     override_filename = os.path.join(
-        component.path, 'envs', os.environ.get('ENVIRONMENT', 'CI')
+        component.path, 'envs', os.environ.get('ENVIRONMENT', 'local')
     )
-
     if os.path.exists(override_filename):
         with open(override_filename, 'r') as f:
             for line in f.read().splitlines():
@@ -51,6 +50,7 @@ def set_envs(components):
         comp_env_dict.update(env_dependent_overrides(comp))
 
         integration_dict = {}
+
         for upstream in comp.get_upstream_builds():
             upstream_env = env_dict.get(upstream.title)
             if not upstream_env:

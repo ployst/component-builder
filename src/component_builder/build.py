@@ -3,7 +3,7 @@ import sys
 
 from bash import bash
 
-from . import github
+from . import config, github
 
 
 class BuilderFailure(Exception):
@@ -44,6 +44,17 @@ def declare_component_usage(title):
 def command_exists(makefile, command):
     b = bash('make -f {0} -n {1}'.format(makefile, command))
     return b.code == 0
+
+
+class Builder(object):
+    def __init__(self, root_dir='.'):
+        self.path = os.path.abspath(root_dir)
+
+    def configure(self):
+        config.read_component_configuration(
+            open(os.path.join(self.path, 'builder.ini')),
+            root=self.path
+        )
 
 
 def run(mode, components, status_callback=None, optional=False):
