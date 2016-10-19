@@ -4,6 +4,7 @@ import sys
 from bash import bash
 
 from . import config, github
+from .utils import make
 
 
 class BuilderFailure(Exception):
@@ -41,8 +42,8 @@ def declare_component_usage(title):
                 github.add_component_label(pr_url, title)
 
 
-def command_exists(makefile, command):
-    b = bash('make -f {0} -n {1}'.format(makefile, command))
+def command_exists(component, command):
+    b = make(component.path, envs="", options="-n", cmd=command)
     return b.code == 0
 
 
@@ -65,18 +66,14 @@ def run(mode, components, status_callback=None, optional=False):
         mark_commit_status(mode, comp.title, 'pending')
 
     for comp in components:
-        comp_path = comp.path
         comp_name = comp.title
         print_message("{0}: {1}".format(mode, comp_name))
         # run build scripts in order they've been given.
-        makefile = os.path.join(comp_path, 'Makefile')
-        if optional and not command_exists(makefile, mode):
+        if optional and not command_exists(comp, mode):
             print("Not available")
             continue
-        cmd = '{envs} make -f {0} {1}'.format(
-            makefile, mode, envs=comp.env_string)
-        print(cmd)
-        b = bash(cmd, stdout=sys.stdout, stderr=sys.stderr)
+        b = make(
+            comp.path, envs=comp.env_string, cmd=mode, output_console=True)
         if b.code != 0:
             errors.append(comp_name)
             mark_commit_status(mode, comp_name, 'error')

@@ -4,8 +4,9 @@ Intelligent builder for working with component-based repositories
 Usage:
   compbuild discover
   compbuild build [<component>...]
-  compbuild test [<component>...]
+  compbuild env [<component>...]
   compbuild release [<component>...]
+  compbuild test [<component>...]
   compbuild tag
   compbuild -h | --help
   compbuild --version
@@ -14,6 +15,7 @@ Options:
   -h --help            Show this screen.
   --version            Show version.
 """
+import json
 import os
 
 from docopt import docopt
@@ -40,6 +42,8 @@ def cli():
         github.create_tag(os.environ['RELEASE_TAG'])
     elif arguments['release']:
         release.run(components)
+    elif arguments['env']:
+        print("\n".join(json.dumps(c.env, indent=4) for c in components))
 
 if __name__ == '__main__':
     cli()

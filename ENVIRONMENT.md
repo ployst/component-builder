@@ -36,9 +36,9 @@ BUILD_SHA
 BUILD_BRANCH
     The currently built branch
 
-BUILD_NUMBER
+BUILD_IDENTIFIER
     Unique identifier of the current build
-    
+
 BUILD_URL
     A URL that points to the build job (used in commit status')
 

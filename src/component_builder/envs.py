@@ -1,5 +1,7 @@
 import os
 
+from .utils import make
+
 
 def ensure_report_location(comp_name):
     report_location = os.path.join(
@@ -29,6 +31,18 @@ def env_dependent_overrides(component):
     return envvars
 
 
+def get_version(component):
+    b = make(
+        component.path,
+        'BUILD_IDENTIFIER={0}'.format(os.environ['BUILD_IDENTIFIER']),
+        options='--silent',
+        cmd='version'
+    )
+    if b.code != 0:
+        raise Exception('Version errored: {0}'.format(b.stderr))
+    return b.value()
+
+
 def set_envs(components):
     """
     Given a list of components, get the environment in which they should run.
@@ -40,11 +54,12 @@ def set_envs(components):
     for comp in components:
         comp_name = comp.title
         report_location = ensure_report_location(comp_name)
-
+        version = get_version(comp)
         comp_env_dict = {
             'DOCKER_IMAGE': comp_name,
-            'DOCKER_TAG': os.environ['RELEASE_TAG'],
-            'REPORT_LOCATION': report_location
+            'DOCKER_TAG': version,
+            'REPORT_LOCATION': report_location,
+            'VERSION': version,
         }
 
         comp_env_dict.update(env_dependent_overrides(comp))

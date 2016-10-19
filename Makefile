@@ -19,4 +19,4 @@ release:
 	bash ${ADI_DIR}/release.sh
 
 version:
-	echo "1.0.${BUILD_NUMBER}"
+	echo "1.0.${BUILD_IDENTIFIER}"

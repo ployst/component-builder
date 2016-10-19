@@ -14,7 +14,7 @@ from component_builder.envs import set_envs
 
 @patch('component_builder.build.os.environ', {
     'CENTRAL_REPORT_LOCATION': '/reports',
-    'RELEASE_TAG': '0.1'
+    'BUILD_IDENTIFIER': '0.1'
 })
 class TestSetEnvs(unittest.TestCase):
 
@@ -32,8 +32,9 @@ class TestSetEnvs(unittest.TestCase):
 
         self.assertEqual(
             sorted(Component.all['dummy-island-service'].env_string.split(' ')),
-            ['DOCKER_IMAGE=dummy-island-service', 'DOCKER_TAG=0.1',
-             'REPORT_LOCATION=/reports/dummy-island-service']
+            ['DOCKER_IMAGE=dummy-island-service', 'DOCKER_TAG=1.5.0.1',
+             'REPORT_LOCATION=/reports/dummy-island-service',
+             'VERSION=1.5.0.1']
         )
 
     def test_provides_images_to_downstream_dependents(self):
@@ -42,9 +43,10 @@ class TestSetEnvs(unittest.TestCase):
         self.assertEqual(
             sorted(Component.all['dummy-integration'].env_string.split(' ')),
             ['DOCKER_IMAGE=dummy-integration',
-             'DOCKER_TAG=0.1',
-             'DUMMY_APP_DOCKER_IMAGE=dummy-app:0.1',
-             'REPORT_LOCATION=/reports/dummy-integration']
+             'DOCKER_TAG=2.0.0.1',
+             'DUMMY_APP_DOCKER_IMAGE=dummy-app:5.4.0.1',
+             'REPORT_LOCATION=/reports/dummy-integration',
+             'VERSION=2.0.0.1']
         )
 
     def test_uses_env_dependent_variables_defined_by_component(self):
@@ -54,7 +56,8 @@ class TestSetEnvs(unittest.TestCase):
         self.assertEqual(
             sorted(Component.all['dummy-app'].env_string.split(' ')),
             ['ANOTHER_VAR=$CIRCLE_MAGIC', 'DOCKER_IMAGE=dummy-app',
-             'DOCKER_TAG=0.1', 'REPORT_LOCATION=/reports/dummy-app']
+             'DOCKER_TAG=5.4.0.1', 'REPORT_LOCATION=/reports/dummy-app',
+             'VERSION=5.4.0.1']
         )
 
     def test_uses_local_variables_script_if_not_on_circle(self):
@@ -64,7 +67,8 @@ class TestSetEnvs(unittest.TestCase):
         self.assertEqual(
             sorted(Component.all['dummy-app'].env_string.split(' ')),
             ['DOCKER_IMAGE=dummy-app',
-             'DOCKER_TAG=0.1',
+             'DOCKER_TAG=5.4.0.1',
              'LOCAL_VAR=buildermagic',
-             'REPORT_LOCATION=/reports/dummy-app']
+             'REPORT_LOCATION=/reports/dummy-app',
+             'VERSION=5.4.0.1']
         )
