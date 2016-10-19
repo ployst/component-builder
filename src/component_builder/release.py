@@ -19,4 +19,4 @@ def run(components):
         else:
             raise Exception("Unsupported release process")
 
-        github.update_branch(comp.branch_name('released'))
+        github.update_branch(component.branch_name('released'))

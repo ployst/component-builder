@@ -29,7 +29,7 @@ def cli():
     b = build.Builder()
     b.configure()
 
-    components = discover.run(arguments.get('<component>', []))
+    components = discover.run(b.components, arguments.get('<component>', []))
     envs.set_envs(components)
 
     if arguments['discover']:

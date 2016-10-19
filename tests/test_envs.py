@@ -21,17 +21,14 @@ class TestSetEnvs(unittest.TestCase):
     def setUp(self):
         appdir = join(dirname(__file__), 'dummy-single-repo')
         b = Builder(appdir)
-        b.configure()
-        self.ordered_candidates = Tree.ordered(Component.all.values())
-
-    def tearDown(self):
-        Component.all = {}
+        self.components = b.configure()
+        self.ordered_candidates = Tree.ordered(self.components.values())
 
     def test_provides_dict_of_env_strings(self):
         set_envs(self.ordered_candidates)
 
         self.assertEqual(
-            sorted(Component.all['dummy-island-service'].env_string.split(' ')),
+            sorted(self.components['dummy-island-service'].env_string.split(' ')),
             ['DOCKER_IMAGE=dummy-island-service', 'DOCKER_TAG=1.5.0.1',
              'REPORT_LOCATION=/reports/dummy-island-service',
              'VERSION=1.5.0.1']
@@ -41,7 +38,7 @@ class TestSetEnvs(unittest.TestCase):
         set_envs(self.ordered_candidates)
 
         self.assertEqual(
-            sorted(Component.all['dummy-integration'].env_string.split(' ')),
+            sorted(self.components['dummy-integration'].env_string.split(' ')),
             ['DOCKER_IMAGE=dummy-integration',
              'DOCKER_TAG=2.0.0.1',
              'DUMMY_APP_DOCKER_IMAGE=dummy-app:5.4.0.1',
@@ -54,7 +51,7 @@ class TestSetEnvs(unittest.TestCase):
 
         set_envs(self.ordered_candidates)
         self.assertEqual(
-            sorted(Component.all['dummy-app'].env_string.split(' ')),
+            sorted(self.components['dummy-app'].env_string.split(' ')),
             ['ANOTHER_VAR=$CIRCLE_MAGIC', 'DOCKER_IMAGE=dummy-app',
              'DOCKER_TAG=5.4.0.1', 'REPORT_LOCATION=/reports/dummy-app',
              'VERSION=5.4.0.1']
@@ -65,7 +62,7 @@ class TestSetEnvs(unittest.TestCase):
         set_envs(self.ordered_candidates)
 
         self.assertEqual(
-            sorted(Component.all['dummy-app'].env_string.split(' ')),
+            sorted(self.components['dummy-app'].env_string.split(' ')),
             ['DOCKER_IMAGE=dummy-app',
              'DOCKER_TAG=5.4.0.1',
              'LOCAL_VAR=buildermagic',

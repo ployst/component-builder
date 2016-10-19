@@ -10,7 +10,7 @@ def read_component_configuration(builder_ini_file, root='.'):
         'release-process': ''
     })
     config.readfp(builder_ini_file)
-
+    components = {}
     for component in config.sections():
         kwargs = {
             'title': component,
@@ -20,4 +20,6 @@ def read_component_configuration(builder_ini_file, root='.'):
         downstream = config.get(component, 'downstream')
         if downstream:
             kwargs['downstream'] = downstream.split(',')
-        Component(**kwargs)
+        c = Component(**kwargs)
+        components[c.title] = c
+    return components

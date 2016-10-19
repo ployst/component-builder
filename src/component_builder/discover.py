@@ -1,4 +1,4 @@
-from .component import Component, Tree
+from .component import Tree
 from .utils import bash
 
 
@@ -13,12 +13,12 @@ def get_changed(candidates, branch=None):
     return filter(is_changed, candidates)
 
 
-def run(components=None):
+def run(components, label_filter=None):
     "Get paths and titles of changed components"
-    if components:
-        candidates = [Component.all[x] for x in components]
+    if label_filter:
+        candidates = [components[x] for x in label_filter]
     else:
-        candidates = Component.all.values()
+        candidates = components.values()
         candidates = get_changed(candidates)
         candidates = Tree.ordered(candidates)
     return candidates

@@ -47,12 +47,14 @@ def command_exists(component, command):
 class Builder(object):
     def __init__(self, root_dir='.'):
         self.path = os.path.abspath(root_dir)
+        self.components = {}
 
     def configure(self):
-        config.read_component_configuration(
+        self.components = config.read_component_configuration(
             open(os.path.join(self.path, 'builder.ini')),
             root=self.path
         )
+        return self.components
 
 
 def run(mode, components, status_callback=None, optional=False):
