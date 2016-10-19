@@ -9,7 +9,14 @@ export ADI_DIR:=${PROJECT_DIR}/adi
 export ROOT_DIR:=$(shell dirname "${PROJECT_DIR}")
 
 build:
-	bash ${ADI_DIR}/build.sh
+	echo "${VERSION}" > VERSION.txt
+	pip install -r ${PROJECT_DIR}/requirements/test.txt
 
 test:
 	bash ${ADI_DIR}/test.sh
+
+release:
+	bash ${ADI_DIR}/release.sh
+
+version:
+	echo "1.0.${BUILD_NUMBER}"
