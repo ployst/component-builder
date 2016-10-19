@@ -2,18 +2,19 @@
 Intelligent builder for working with component-based repositories
 
 Usage:
-  compbuild discover
-  compbuild build [<component>...]
-  compbuild env [<component>...]
-  compbuild release [<component>...]
-  compbuild test [<component>...]
-  compbuild tag [<component>...]
-  compbuild label <label> [<component>...]
+  compbuild discover [--all]
+  compbuild build [<component>...] [--all]
+  compbuild env [<component>...] [--all]
+  compbuild release [<component>...] [--all]
+  compbuild test [<component>...] [--all]
+  compbuild tag [<component>...] [--all]
+  compbuild label <label> [<component>...] [--all]
   compbuild -h | --help
   compbuild --version
 
 Options:
   -h --help            Show this screen.
+  --all                Do all the components
   --version            Show version.
 """
 import json
@@ -29,7 +30,11 @@ def cli():
     b = build.Builder()
     b.configure()
 
-    components = discover.run(b.components, arguments.get('<component>', []))
+    components = discover.run(
+        b.components,
+        arguments.get('<component>', []),
+        arguments['--all']
+    )
     envs.set_envs(components)
 
     if arguments['discover']:
