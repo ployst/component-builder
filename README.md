@@ -25,7 +25,6 @@ Place it in the root of your repository
      [avatar-service]
      path=avatars
 
-
      [billing-service]
      path=billing
 
@@ -40,6 +39,48 @@ Place it in the root of your repository
 
 4. Run commands! (or actually, modify your circle/travis/jenkins scripts to use
    the library)
+
+## Component Definition
+
+Any component defined in builder.ini will be treated as a first class citizen.
+
+### Config
+
+    path
+        path to the component (in which a Makefile should be found)
+    release-process
+        If present docker|custom. If docker, compbuild will expect to find an
+        image built locally (during the build phase) that it can push at the
+        release point to a docker registry
+    downstream
+        A comma separated list of components that should be included in any
+        builds that this component is in. Useful for integration tests for
+        example.
+
+### Makefile
+
+    `make version`
+        Should echo a string defining this version of the component. This is
+        used to tag the repo, to tag docker images for this component and should
+        be used if making libraries.
+
+        BUILD_IDENTIFIER is a useful environment variable passed in to this
+        call which should be used to ensure a unique version on every
+        releasable build
+
+    `make build`
+        Should do everything that is required so that testing and releasing can
+        be performed.
+
+    `make test`
+        Run tests, syntax checkers etc.
+
+    `make release` (optional)
+        If `release-process` is defined as "custom", this will be called during
+        `compbuild release`. Examples of things this might do:
+            - Zip up package, place in known location for later step on build
+              server to ship somewhere.
+            - Release your library to pypi/npm
 
 ## Typical Flow
 
