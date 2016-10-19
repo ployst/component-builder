@@ -7,7 +7,8 @@ Usage:
   compbuild env [<component>...]
   compbuild release [<component>...]
   compbuild test [<component>...]
-  compbuild tag
+  compbuild tag [<component>...]
+  compbuild label <label> [<component>...]
   compbuild -h | --help
   compbuild --version
 
@@ -16,7 +17,6 @@ Options:
   --version            Show version.
 """
 import json
-import os
 
 from docopt import docopt
 
@@ -39,7 +39,11 @@ def cli():
     elif arguments['test']:
         build.run('test', components)
     elif arguments['tag']:
-        github.create_tag(os.environ['RELEASE_TAG'])
+        for comp in components:
+            github.create_tag(comp.env['VERSION'])
+    elif arguments['label']:
+        for comp in components:
+            github.update_branch(comp.branch_name(arguments['<label>']))
     elif arguments['release']:
         release.run(components)
     elif arguments['env']:

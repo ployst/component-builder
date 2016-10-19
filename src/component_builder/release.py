@@ -18,5 +18,3 @@ def run(components):
             build.run('release', [component])
         else:
             raise Exception("Unsupported release process")
-
-        github.label(get_branch('released', component))

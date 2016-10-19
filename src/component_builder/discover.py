@@ -1,5 +1,3 @@
-import os
-
 from .component import Component, Tree
 from .utils import bash
 

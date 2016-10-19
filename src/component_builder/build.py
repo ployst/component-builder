@@ -36,7 +36,7 @@ def declare_component_usage(title):
         prs = os.environ.get('PULL_REQUEST_NAMES', '')
         for pr_url in prs.split(','):
             if pr_url:
-                github.add_component_label(pr_url, title)
+                github.add_pr_component_label(pr_url, title)
 
 
 def command_exists(component, command):
