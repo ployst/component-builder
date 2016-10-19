@@ -9,8 +9,9 @@ class Component(object):
         """
         title: Name of the component. Used for docker images and more...
         path: Path to the component (within which a makefile will be found)
-        release_process: Type of release process. Supported are 'docker'. In
-                         the future, pypi. Leave blank if no release required.
+        release_process: Type of release process. Supported are 'docker' or
+                         'custom'. In the future, pypi. Leave blank if no
+                         release required.
         downstream: List of components that rely on this one.
         """
         self.title = title

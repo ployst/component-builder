@@ -10,7 +10,7 @@ def convert_dict_to_env_string(envdict):
     return env_string
 
 
-def make(path, envs, options, cmd, output_console=False):
+def make(path, cmd, envs="", options="", output_console=False):
     makefile = os.path.join(path, 'Makefile')
     full_cmd = '{envs} make -f {0} {1} {2}'.format(
         makefile, options, cmd, envs=envs)

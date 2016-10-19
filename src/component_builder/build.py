@@ -40,7 +40,7 @@ def declare_component_usage(title):
 
 
 def command_exists(component, command):
-    b = make(component.path, envs="", options="-n", cmd=command)
+    b = make(component.path, command, envs="", options="-n")
     return b.code == 0
 
 
@@ -70,7 +70,7 @@ def run(mode, components, status_callback=None, optional=False):
             print("Not available")
             continue
         b = make(
-            comp.path, envs=comp.env_string, cmd=mode, output_console=True)
+            comp.path, mode, envs=comp.env_string, output_console=True)
         if b.code != 0:
             errors.append(comp_name)
             mark_commit_status(mode, comp_name, 'error')

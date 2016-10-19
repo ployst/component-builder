@@ -34,9 +34,9 @@ def env_dependent_overrides(component):
 def get_version(component):
     b = make(
         component.path,
-        'BUILD_IDENTIFIER={0}'.format(os.environ['BUILD_IDENTIFIER']),
+        'version',
+        envs='BUILD_IDENTIFIER={0}'.format(os.environ['BUILD_IDENTIFIER']),
         options='--silent',
-        cmd='version'
     )
     if b.code != 0:
         raise Exception('Version errored: {0}'.format(b.stderr))
