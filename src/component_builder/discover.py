@@ -1,14 +1,17 @@
-from bash import bash
 import os
 
 from .component import Component, Tree
+from .utils import bash
 
 
-def get_changed(candidates):
+def get_changed(candidates, branch=None):
+
     def is_changed(candidate):
-        b = bash('test $(git log origin/master..HEAD -- {0} '
-                 '| wc -l) -gt 0'.format(candidate.path))
-        return b.code == 0
+        name = branch or candidate.branch_name('stable')
+
+        b = bash('git log --oneline origin/{branch}..HEAD '
+                 '-- {0} || echo "1"'.format(candidate.path, branch=name))
+        return b.value().strip() != ''
     return filter(is_changed, candidates)
 
 
@@ -18,8 +21,6 @@ def run(components=None):
         candidates = [Component.all[x] for x in components]
     else:
         candidates = Component.all.values()
-        # If we're on master, we'll do everything.
-        if os.environ.get('BUILD_BRANCH', '') not in ('master',):
-            candidates = get_changed(candidates)
+        candidates = get_changed(candidates)
         candidates = Tree.ordered(candidates)
     return candidates

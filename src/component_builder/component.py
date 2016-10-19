@@ -21,6 +21,9 @@ class Component(object):
         self.all[title] = self
         self.path = path
 
+    def branch_name(self, label='stable'):
+        return "{0}-{1}".format(label, self.title)
+
     @property
     def env_string(self):
         return convert_dict_to_env_string(self.env)
@@ -49,6 +52,8 @@ class Tree(object):
 
     @classmethod
     def merge_branches(cls, *branches):
+        if not branches:
+            return branches
         if len(branches) > 1:
             left = branches[0]
             right = branches[1]

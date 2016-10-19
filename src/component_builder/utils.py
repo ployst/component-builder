@@ -1,7 +1,18 @@
 import os
 import sys
 
-from bash import bash
+from bash import bash as bash_graceful
+
+
+class bash(bash_graceful):
+    def bash(self, cmd, *args, **kwargs):
+        ret = super(bash, self).bash(cmd, *args, **kwargs)
+        if self.code != 0:
+
+            raise Exception('Error running command {0}:\n{1}'.format(
+                cmd, self.stderr)
+            )
+        return ret
 
 
 def convert_dict_to_env_string(envdict):
