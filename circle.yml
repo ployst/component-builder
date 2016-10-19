@@ -34,5 +34,6 @@ deployment:
   production: # just a label; label names are completely up to you
     branch: master
     commands:
-      - compbuild release
       - compbuild tag
+      - compbuild label stable
+      - compbuild release

@@ -1,7 +1,7 @@
 import os
 import sys
 
-from . import build
+from . import build, github
 from .utils import bash
 
 
@@ -18,3 +18,5 @@ def run(components):
             build.run('release', [component])
         else:
             raise Exception("Unsupported release process")
+
+        github.update_branch(comp.branch_name('released'))
