@@ -1,7 +1,4 @@
 import os.path
-import sys
-
-from bash import bash
 
 from . import config, github
 from .utils import make

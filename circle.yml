@@ -21,7 +21,7 @@ machine:
 
 dependencies:
   override:
-    - pip install -e .
+    - make build .
     - pip freeze
     - compbuild discover  # just to output what will be built
     - compbuild build
