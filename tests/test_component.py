@@ -2,14 +2,12 @@ import unittest
 from StringIO import StringIO
 from textwrap import dedent
 
-from component_builder.component import (
-    Component, Tree, read_component_configuration
-)
+from component_builder.component import Component, Tree
+from component_builder.config import read_component_configuration
 
 
 class TestDependencyTree(unittest.TestCase):
     def setUp(self):
-        Component.all = {}
         self.a1 = Component('a1', '', downstream=['c1'])
         self.b1 = Component('b1', '', downstream=['c1'])
         self.c1 = Component('c1', '',)
@@ -76,10 +74,10 @@ class TestDependencies(unittest.TestCase):
             [super-integration]
             path=super-integration
             """))
-        read_component_configuration(s)
+        self.components = read_component_configuration(s)
 
     def test_include_downstream_dependencies(self):
-        dep_ordered = Tree.ordered([Component.all['service-A']])
+        dep_ordered = Tree.ordered([self.components['service-A']])
         self.assertEqual(
             [d.title for d in dep_ordered],
             ['service-A', 'integration', 'super-integration']
@@ -87,8 +85,8 @@ class TestDependencies(unittest.TestCase):
 
     def test_downstream_dependencies_at_the_end(self):
         dep_ordered = Tree.ordered(
-            [Component.all['integration'],
-             Component.all['service-A'],
+            [self.components['integration'],
+             self.components['service-A'],
              ]
         )
         self.assertEqual(
@@ -97,7 +95,7 @@ class TestDependencies(unittest.TestCase):
         )
 
     def test_get_upstream_builds(self):
-        upstream = Component.all['integration'].get_upstream_builds()
+        upstream = self.components['integration'].get_upstream_builds()
         self.assertEqual(
             sorted([d.title for d in upstream]),
             ['service-A', 'ui']

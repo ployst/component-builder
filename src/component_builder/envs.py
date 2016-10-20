@@ -1,5 +1,7 @@
 import os
 
+from .utils import make
+
 
 def ensure_report_location(comp_name):
     report_location = os.path.join(
@@ -15,16 +17,9 @@ def ensure_report_location(comp_name):
 def env_dependent_overrides(component):
     envvars = {}
 
-    # TODO: builder.ini needs to have a section that defines lots of things
-    # include this there
-    if os.environ.get('CIRCLECI'):
-        override_filename = os.path.join(
-            component.path, 'adi', 'envs', 'circle'
-        )
-    else:
-        override_filename = os.path.join(
-            component.path, 'adi', 'envs', 'local'
-        )
+    override_filename = os.path.join(
+        component.path, 'envs', os.environ.get('ENVIRONMENT', 'local')
+    )
     if os.path.exists(override_filename):
         with open(override_filename, 'r') as f:
             for line in f.read().splitlines():
@@ -34,6 +29,18 @@ def env_dependent_overrides(component):
                 key, value = line.split('=')
                 envvars[key] = value
     return envvars
+
+
+def get_version(component):
+    b = make(
+        component.path,
+        'version',
+        envs='BUILD_IDENTIFIER={0}'.format(os.environ['BUILD_IDENTIFIER']),
+        options='--silent',
+    )
+    if b.code != 0:
+        raise Exception('Version errored: {0}'.format(b.stderr))
+    return b.value()
 
 
 def set_envs(components):
@@ -47,16 +54,18 @@ def set_envs(components):
     for comp in components:
         comp_name = comp.title
         report_location = ensure_report_location(comp_name)
-
+        version = get_version(comp)
         comp_env_dict = {
             'DOCKER_IMAGE': comp_name,
-            'DOCKER_TAG': os.environ['RELEASE_TAG'],
-            'REPORT_LOCATION': report_location
+            'DOCKER_TAG': version,
+            'REPORT_LOCATION': report_location,
+            'VERSION': version,
         }
 
         comp_env_dict.update(env_dependent_overrides(comp))
 
         integration_dict = {}
+
         for upstream in comp.get_upstream_builds():
             upstream_env = env_dict.get(upstream.title)
             if not upstream_env:

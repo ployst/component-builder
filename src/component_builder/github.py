@@ -56,7 +56,18 @@ def create_tag(tag):
     )
 
 
-def add_component_label(pr_url, title):
+def update_branch(branch_name):
+    sha = get_sha()
+    repo = get_repo()
+
+    b = repo.ref('heads/{0}'.format(branch_name))
+    if b:
+        b.update(sha, force=True)
+    else:
+        repo.create_ref('refs/heads/{0}'.format(branch_name), sha)
+
+
+def add_pr_component_label(pr_url, title):
     new_label = 'component:{0}'.format(title)
     issue_id = pr_url.split('/')[-1]
     repo = get_repo()

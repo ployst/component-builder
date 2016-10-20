@@ -1,0 +1,39 @@
+machine:
+  timezone:
+    Etc/UTC
+
+  python:
+    version: 2.7.11
+
+  environment:
+
+    CENTRAL_REPORT_LOCATION: $CIRCLE_TEST_REPORTS
+    ENVIRONMENT: CI
+    GITHUB_PROJECT_USERNAME: $CIRCLE_PROJECT_USERNAME
+    GITHUB_PROJECT_REPONAME: $CIRCLE_PROJECT_REPONAME
+    GIT_TAGGER_EMAIL: builder@ployst.com
+    BUILD_URL: https://circleci.com/gh/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM
+    BUILD_BRANCH: $CIRCLE_BRANCH
+    BUILD_IDENTIFIER: 1.$CIRCLE_BUILD_NUM
+    BUILD_SHA: $CIRCLE_SHA1
+    PULL_REQUEST_NAMES: $CI_PULL_REQUESTS
+    INTERACT_WITH_GITHUB: yes
+
+dependencies:
+  override:
+    - make build .
+    - pip freeze
+    - compbuild discover  # just to output what will be built
+    - compbuild build
+
+test:
+  override:
+    - compbuild test
+
+deployment:
+  production: # just a label; label names are completely up to you
+    branch: master
+    commands:
+      - compbuild tag
+      - compbuild label stable
+      - compbuild release

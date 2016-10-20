@@ -1,3 +1,7 @@
 *.egg-info
 *.pyc
 nosetests.xml
+VERSION.txt
+flake8.txt
+dist
+build

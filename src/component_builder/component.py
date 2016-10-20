@@ -1,5 +1,5 @@
-from ConfigParser import ConfigParser
 from .utils import convert_dict_to_env_string
+
 
 class Component(object):
 
@@ -9,8 +9,9 @@ class Component(object):
         """
         title: Name of the component. Used for docker images and more...
         path: Path to the component (within which a makefile will be found)
-        release_process: Type of release process. Supported are 'docker'. In
-                         the future, pypi. Leave blank if no release required.
+        release_process: Type of release process. Supported are 'docker' or
+                         'custom'. In the future, pypi. Leave blank if no
+                         release required.
         downstream: List of components that rely on this one.
         """
         self.title = title
@@ -19,6 +20,9 @@ class Component(object):
         self.env = {}
         self.all[title] = self
         self.path = path
+
+    def branch_name(self, label='stable'):
+        return "{0}-{1}".format(label, self.title)
 
     @property
     def env_string(self):
@@ -48,12 +52,13 @@ class Tree(object):
 
     @classmethod
     def merge_branches(cls, *branches):
+        if not branches:
+            return branches
         if len(branches) > 1:
             left = branches[0]
             right = branches[1]
             rest = branches[2:]
             left_root = left[0]
-            right_root = right[0]
 
             if left_root in right:
                 first = right
@@ -82,22 +87,3 @@ class Tree(object):
             branches.append(branch)
 
         return cls.merge_branches(*branches)
-
-
-def read_component_configuration(builder_ini_file):
-    config = ConfigParser(defaults={
-        'downstream': '',
-        'release-process': ''
-    })
-    config.readfp(builder_ini_file)
-
-    for component in config.sections():
-        kwargs = {
-            'title': component,
-            'release_process': config.get(component, 'release-process'),
-            'path': config.get(component, 'path')
-        }
-        downstream = config.get(component, 'downstream')
-        if downstream:
-            kwargs['downstream'] = downstream.split(',')
-        Component(**kwargs)
