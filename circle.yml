@@ -32,7 +32,7 @@ test:
 
 deployment:
   production: # just a label; label names are completely up to you
-    branch: master
+    branch: master-fixes
     commands:
       - compbuild tag
       - compbuild label stable

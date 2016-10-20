@@ -20,5 +20,8 @@ echo "$content" > $PYPIRC
 cat $PYPIRC
 
 python setup.py sdist bdist_wheel upload -r pypi
+RESULT_CODE=$?
 
 cp /tmp/pypirc $PYPIRC
+
+exit $RESULT_CODE
