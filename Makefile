@@ -3,22 +3,17 @@
 # `make build`
 # `make test`
 # `make release`
-
-export PROJECT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-export ADI_DIR:=${PROJECT_DIR}/adi
-export ROOT_DIR:=$(shell dirname "${PROJECT_DIR}")
-
 .PHONY: build test
 
 build:
-	echo "${VERSION}" > ${PROJECT_DIR}/VERSION.txt
-	pip install -r ${PROJECT_DIR}/requirements/test.txt
+	echo "${VERSION}" > VERSION.txt
+	pip install -r requirements/test.txt
 
 test:
-	bash ${ADI_DIR}/test.sh
+	bash adi/test.sh
 
 release:
-	bash ${ADI_DIR}/release.sh
+	bash adi/release.sh
 
 version:
 	echo "1.0.${BUILD_IDENTIFIER}"
