@@ -17,8 +17,6 @@ EOF
 
 echo "$content" > $PYPIRC
 
-cat $PYPIRC
-
 python setup.py sdist bdist_wheel upload -r pypi
 RESULT_CODE=$?
 
