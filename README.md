@@ -97,7 +97,6 @@ Given the above repository, where a PR was made with changes to `user-api` and
     - Run `make test` on changed components
     - Create/Update a branch on github named stable-user-api to point to this commit
     - Create/Update a branch on github named stable-notifications to point to this commit
-    # TODO: this doesn't actually happen yet
     - Create a tag of notifications-${version} and user-api-${version}
     - Run `make release` on notifications
     - Push a docker image on behalf of user-api
