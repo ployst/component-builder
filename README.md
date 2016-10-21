@@ -52,9 +52,9 @@ Any component defined in builder.ini will be treated as a first class citizen.
         If present docker|custom. If docker, compbuild will expect to find an
         image built locally (during the build phase) that it can push at the
         release point to a docker registry
-    downstream
-        A comma separated list of components that should be included in any
-        builds that this component is in. Useful for integration tests for
+    upstream
+        A comma separated list of components that, if built, should trigger
+        a build for this component. Useful for integration tests for
         example.
 
 ### Makefile
@@ -97,7 +97,6 @@ Given the above repository, where a PR was made with changes to `user-api` and
     - Run `make test` on changed components
     - Create/Update a branch on github named stable-user-api to point to this commit
     - Create/Update a branch on github named stable-notifications to point to this commit
-    # TODO: this doesn't actually happen yet
     - Create a tag of notifications-${version} and user-api-${version}
     - Run `make release` on notifications
     - Push a docker image on behalf of user-api

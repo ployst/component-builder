@@ -1,12 +1,15 @@
 import os.path
-from ConfigParser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 
 from .component import Component
 
 
 def read_component_configuration(builder_ini_file, root='.'):
     config = ConfigParser(defaults={
-        'downstream': '',
+        'upstream': '',
         'release-process': ''
     })
     config.readfp(builder_ini_file)
@@ -17,9 +20,9 @@ def read_component_configuration(builder_ini_file, root='.'):
             'release_process': config.get(component, 'release-process'),
             'path': os.path.join(root, config.get(component, 'path'))
         }
-        downstream = config.get(component, 'downstream')
-        if downstream:
-            kwargs['downstream'] = downstream.split(',')
+        upstream = config.get(component, 'upstream')
+        if upstream:
+            kwargs['upstream'] = upstream.split(',')
         c = Component(**kwargs)
         components[c.title] = c
     return components

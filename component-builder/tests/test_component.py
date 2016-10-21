@@ -1,5 +1,8 @@
 import unittest
-from StringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 from textwrap import dedent
 
 from component_builder.component import Component, Tree
@@ -8,13 +11,13 @@ from component_builder.config import read_component_configuration
 
 class TestDependencyTree(unittest.TestCase):
     def setUp(self):
-        self.a1 = Component('a1', '', downstream=['c1'])
-        self.b1 = Component('b1', '', downstream=['c1'])
-        self.c1 = Component('c1', '',)
-        self.d1 = Component('d1', '', downstream=['c1'])
-        self.a2 = Component('a2', '', downstream=['b2'])
-        self.b2 = Component('b2', '', downstream=['d1'])
-        self.c2 = Component('c2', '', downstream=['d1'])
+        self.a1 = Component('a1', '')
+        self.b1 = Component('b1', '')
+        self.c1 = Component('c1', '', upstream=['a1', 'b1', 'd1'])
+        self.d1 = Component('d1', '', upstream=['c2', 'b2'])
+        self.a2 = Component('a2', '')
+        self.b2 = Component('b2', '', upstream=['a2'])
+        self.c2 = Component('c2', '')
 
     def test_hierarchy_correct(self):
         self.assertEqual(
@@ -58,21 +61,20 @@ class TestDependencies(unittest.TestCase):
 
     def setUp(self):
         s = StringIO(dedent(
-         """
+         u"""
             [ui]
             path=ui
-            downstream=integration
 
             [service-A]
             path=service-a
-            downstream=integration
 
             [integration]
             path=integration
-            downstream=super-integration
+            upstream=service-A,ui
 
             [super-integration]
             path=super-integration
+            upstream=integration
             """))
         self.components = read_component_configuration(s)
 
