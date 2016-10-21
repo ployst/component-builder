@@ -35,5 +35,5 @@ deployment:
     branch: master-fixes
     commands:
       - compbuild tag
-      - compbuild label stable
       - compbuild release
+      - compbuild label stable
