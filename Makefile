@@ -11,7 +11,7 @@ export ROOT_DIR:=$(shell dirname "${PROJECT_DIR}")
 .PHONY: build test
 
 build:
-	echo "${VERSION}" > VERSION.txt
+	echo "${VERSION}" > ${PROJECT_DIR}/VERSION.txt
 	pip install -r ${PROJECT_DIR}/requirements/test.txt
 
 test:
