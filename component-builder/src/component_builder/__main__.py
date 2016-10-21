@@ -2,7 +2,7 @@
 Intelligent builder for working with component-based repositories
 
 Usage:
-  compbuild discover [--all]
+  compbuild discover [--all] [--with-versions]
   compbuild build [<component>...] [--all]
   compbuild env [<component>...] [--all]
   compbuild release [<component>...] [--all]
@@ -16,6 +16,8 @@ Options:
   -h --help            Show this screen.
   --all                Do all the components
   --version            Show version.
+  --with-versions      Print out all items of interest, with associated versions
+
 """
 import json
 
@@ -38,7 +40,11 @@ def cli():
     envs.set_envs(components)
 
     if arguments['discover']:
-        print("\n".join(c.title for c in components))
+        tmpl = "{title}"
+        if arguments['--with-versions']:
+            tmpl += ':{version}'
+        for c in components:
+            print(tmpl.format(title=c.title, version=c.env['VERSION']))
     elif arguments['build']:
         build.run('build', components)
     elif arguments['test']:
