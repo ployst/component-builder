@@ -7,7 +7,7 @@
 
 build:
 	echo "${VERSION}" > VERSION.txt
-	pip install -r requirements/test.txt
+	pip install tox
 
 test:
 	bash adi/test.sh
