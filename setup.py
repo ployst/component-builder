@@ -33,7 +33,7 @@ version = open('VERSION.txt', 'r').read().strip()
 setup(
     name='component_builder',
     description='Build runner of components for testing/releasing purposes.',
-    version='0.1',
+    version=version,
     install_requires=[
         'bash>=0.5',
         'docopt',
