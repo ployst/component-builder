@@ -25,6 +25,8 @@ dependencies:
     - pip freeze
     - compbuild discover  # just to output what will be built
     - compbuild build
+  post:
+    - pyenv local 2.7.10 3.5.2
 
 test:
   override:
