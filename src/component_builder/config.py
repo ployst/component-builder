@@ -1,5 +1,8 @@
 import os.path
-from ConfigParser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 
 from .component import Component
 

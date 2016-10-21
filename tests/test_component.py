@@ -1,5 +1,8 @@
 import unittest
-from StringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 from textwrap import dedent
 
 from component_builder.component import Component, Tree
@@ -58,7 +61,7 @@ class TestDependencies(unittest.TestCase):
 
     def setUp(self):
         s = StringIO(dedent(
-         """
+         u"""
             [ui]
             path=ui
             downstream=integration
