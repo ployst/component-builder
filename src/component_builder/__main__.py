@@ -45,7 +45,9 @@ def cli():
         build.run('test', components)
     elif arguments['tag']:
         for comp in components:
-            github.create_tag(comp.env['VERSION'])
+            github.create_tag("{0}-{0}".format(
+                comp.title, comp.env['VERSION'])
+            )
     elif arguments['label']:
         for comp in components:
             github.update_branch(comp.branch_name(arguments['<label>']))
