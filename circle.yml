@@ -21,7 +21,7 @@ machine:
 
 dependencies:
   override:
-    - cd component-builder && make build .
+    - cd component-builder && echo "0.0" > VERSION.txt && pip install -e .
     - pip freeze
     - compbuild discover  # just to output what will be built
     - compbuild build
