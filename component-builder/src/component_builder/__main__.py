@@ -45,7 +45,7 @@ def cli():
         build.run('test', components)
     elif arguments['tag']:
         for comp in components:
-            github.create_tag("{0}-{0}".format(
+            github.create_tag("{0}-{1}".format(
                 comp.title, comp.env['VERSION'])
             )
     elif arguments['label']:
