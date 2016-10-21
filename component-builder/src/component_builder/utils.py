@@ -1,4 +1,3 @@
-import os
 import sys
 
 from bash import bash as bash_graceful
@@ -22,7 +21,7 @@ def convert_dict_to_env_string(envdict):
 
 
 def make(path, cmd, envs="", options="", output_console=False):
-    full_cmd = 'cd {path} && {envs} make {1} {2}'.format(
+    full_cmd = 'cd {path} && {envs} make {0} {1}'.format(
         options, cmd, path=path, envs=envs)
     bashkw = {}
 
