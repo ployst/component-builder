@@ -2,13 +2,13 @@
 Intelligent builder for working with component-based repositories
 
 Usage:
-  compbuild discover [--all] [--with-versions]
-  compbuild build [<component>...] [--all]
-  compbuild env [<component>...] [--all]
-  compbuild release [<component>...] [--all]
-  compbuild test [<component>...] [--all]
-  compbuild tag [<component>...] [--all]
-  compbuild label <label> [<component>...] [--all]
+  compbuild discover [--all] [--with-versions] [--conf=FILE]
+  compbuild build [<component>...] [--all] [--conf=FILE]
+  compbuild env [<component>...] [--all] [--conf=FILE]
+  compbuild release [<component>...] [--all] [--conf=FILE]
+  compbuild test [<component>...] [--all] [--conf=FILE]
+  compbuild tag [<component>...] [--all] [--conf=FILE]
+  compbuild label <label> [<component>...] [--all] [--conf=FILE]
   compbuild -h | --help
   compbuild --version
 
@@ -16,20 +16,22 @@ Options:
   -h --help            Show this screen.
   --all                Do all the components
   --version            Show version.
+  --conf=FILE          Configuration file location [default: builder.ini]
   --with-versions      Print out all items of interest, with associated versions
 
 """
 import json
+import sys
 
 from docopt import docopt
 
 from . import build, discover, envs, github, release
 
 
-def cli():
+def cli(out=sys.stdout):
     arguments = docopt(__doc__, version='1.0')
 
-    b = build.Builder()
+    b = build.Builder(arguments['--conf'])
     b.configure()
 
     components = discover.run(
@@ -44,7 +46,9 @@ def cli():
         if arguments['--with-versions']:
             tmpl += ':{version}'
         for c in components:
-            print(tmpl.format(title=c.title, version=c.env['VERSION']))
+            out.write(
+                tmpl.format(title=c.title, version=c.env['VERSION']) + '\n'
+            )
     elif arguments['build']:
         build.run('build', components)
     elif arguments['test']:
@@ -60,7 +64,7 @@ def cli():
     elif arguments['release']:
         release.run(components)
     elif arguments['env']:
-        print("\n".join(json.dumps(c.env, indent=4) for c in components))
+        out.write("\n".join(json.dumps(c.env, indent=4) for c in components))
 
 if __name__ == '__main__':
     cli()

@@ -45,14 +45,14 @@ def command_exists(component, command):
 
 
 class Builder(object):
-    def __init__(self, root_dir='.'):
-        self.path = os.path.abspath(root_dir)
+    def __init__(self, builder_file):
+        self.builder_file = builder_file
+        self.path = os.path.dirname(self.builder_file)
         self.components = {}
 
     def configure(self):
         self.components = config.read_component_configuration(
-            open(os.path.join(self.path, 'builder.ini')),
-            root=self.path
+            open(self.builder_file), root=self.path
         )
         return self.components
 
