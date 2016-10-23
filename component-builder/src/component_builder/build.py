@@ -48,7 +48,6 @@ class Builder(object):
     def __init__(self, builder_file):
         self.builder_file = builder_file
         self.path = os.path.dirname(self.builder_file)
-        self.components = {}
 
     def configure(self):
         self.components = config.read_component_configuration(

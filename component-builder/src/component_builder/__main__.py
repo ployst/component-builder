@@ -17,7 +17,7 @@ Options:
   --all                Do all the components
   --version            Show version.
   --conf=FILE          Configuration file location [default: builder.ini]
-  --with-versions      Print out all items of interest, with associated versions
+  --with-versions      Print out all items of interest, with versions
 
 """
 import json
@@ -42,9 +42,9 @@ def cli(out=sys.stdout):
     envs.set_envs(components)
 
     if arguments['discover']:
-        tmpl = "{title}"
+        tmpl = u"{title}"
         if arguments['--with-versions']:
-            tmpl += ':{version}'
+            tmpl += u':{version}'
         for c in components:
             out.write(
                 tmpl.format(title=c.title, version=c.env['VERSION']) + '\n'

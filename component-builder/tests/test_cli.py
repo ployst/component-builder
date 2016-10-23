@@ -1,7 +1,7 @@
-from StringIO import StringIO
-import unittest
+from io import StringIO
 import os
 from os.path import abspath, dirname, join
+import unittest
 
 from mock import patch
 

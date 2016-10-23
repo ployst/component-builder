@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import os.path
 try:
     from configparser import ConfigParser
@@ -13,7 +14,7 @@ def read_component_configuration(builder_ini_file, root='.'):
         'release-process': ''
     })
     config.readfp(builder_ini_file)
-    components = {}
+    components = OrderedDict()
     for component in config.sections():
         kwargs = {
             'title': component,
