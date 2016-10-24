@@ -67,8 +67,21 @@ def update_branch(branch_name):
         repo.create_ref('refs/heads/{0}'.format(branch_name), sha)
 
 
+def validate_pr_url(pr_url):
+    issue_id = pr_url.split('/')[-1]
+    try:
+        int(issue_id)
+        return True
+    except ValueError:
+        raise ValidationError(
+            'URL "{0}" not in the correct format'
+            ' <string>/<id:int>'.format(pr_url)
+        )
+
+
 def add_pr_component_label(pr_url, title):
     new_label = 'component:{0}'.format(title)
+    validate_pr_url(pr_url)
     issue_id = pr_url.split('/')[-1]
     repo = get_repo()
     issue = repo.issue(issue_id)
@@ -79,3 +92,7 @@ def add_pr_component_label(pr_url, title):
             return
 
     issue.add_labels(new_label)
+
+
+class ValidationError(Exception):
+    pass
