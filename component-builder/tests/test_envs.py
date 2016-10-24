@@ -19,8 +19,8 @@ from component_builder.envs import set_envs
 class TestSetEnvs(unittest.TestCase):
 
     def setUp(self):
-        appdir = join(dirname(__file__), 'dummy-single-repo')
-        b = Builder(appdir)
+        conf = join(dirname(__file__), 'dummy-single-repo', 'builder.ini')
+        b = Builder(conf)
         self.components = b.configure()
         self.ordered_candidates = Tree.ordered(self.components.values())
 
