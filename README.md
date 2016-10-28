@@ -13,7 +13,7 @@ a single repo.
 
     ```
      $ ls services
-     avatars    billing    notifications   user-api   
+     avatars    billing    notifications   user-api
     ```
 
 3. Create a `builder.ini` file defining which components you'd like to auto build.
@@ -136,11 +136,11 @@ REMOTE_DOCKER_PATH
     eg.
         eu.gcr.io/$GCLOUD_PROJECTID
 
-DOCKER_PUSH_COMMAND
-    How to perform the docker push.
+DOCKER_CMD_AUTHED
+    How to execute authenticated docker commands
     eg.
-        docker push
-        ~/google-cloud-sdk/bin/gcloud docker push
+        docker [default]
+        ~/google-cloud-sdk/bin/gcloud docker --
 
 #### Github
 
@@ -164,7 +164,7 @@ GITHUB_PROJECT_USERNAME
     Username to access (eg for https://github.com/example/foo this would be
     `example`)
 
-GITHUB_PROJECT_REPONAME    
+GITHUB_PROJECT_REPONAME
     Project to access (eg for https://github.com/example/foo this would be
     `foo`)
 
