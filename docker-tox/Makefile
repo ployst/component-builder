@@ -7,4 +7,4 @@ test:
 	echo "Nothing to test"
 
 version:
-	echo "1.0.${BUILD_NUMBER}"
+	echo "1.0.${BUILD_IDENTIFIER}"
