@@ -19,6 +19,8 @@ machine:
     PULL_REQUEST_NAMES: $CI_PULL_REQUESTS
     INTERACT_WITH_GITHUB: yes
 
+    REMOTE_DOCKER_PATH: docker.io/ployst
+
   services:
     - docker
 

@@ -1,7 +1,7 @@
 .PHONY: build test release version
 
 build:
-	docker build -t ployst/docker-tox:${VERSION} .
+	docker build -t ${DOCKER_IMAGE}:${VERSION} .
 
 test:
 	echo "Nothing to test"
