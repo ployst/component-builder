@@ -19,6 +19,9 @@ machine:
     PULL_REQUEST_NAMES: $CI_PULL_REQUESTS
     INTERACT_WITH_GITHUB: yes
 
+  services:
+    - docker
+
 dependencies:
   override:
     - cd component-builder && echo "0.0" > VERSION.txt && pip install -e .
