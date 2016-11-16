@@ -29,7 +29,8 @@ def filter_by(selectors, components):
 def run(components, component_names=None, get_all=False, selectors=None):
     "Get paths and titles of changed components"
     if component_names and get_all:
-        print("Asked to filter and get all. Assuming filter...")
+        print("Asked for specific components and get all. "
+              "Assuming specific components...")
     if component_names:
         candidates = [components[x] for x in component_names]
     else:
