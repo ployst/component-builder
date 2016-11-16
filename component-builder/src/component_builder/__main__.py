@@ -2,7 +2,8 @@
 Intelligent builder for working with component-based repositories
 
 Usage:
-  compbuild discover [--all] [--with-versions] [--conf=FILE]
+  compbuild discover [--all] [--filter=SELECTOR] [--with-versions] \
+[--conf=FILE]
   compbuild build [<component>...] [--all] [--conf=FILE]
   compbuild env [<component>...] [--all] [--conf=FILE]
   compbuild release [<component>...] [--all] [--conf=FILE]
@@ -15,6 +16,8 @@ Usage:
 Options:
   -h --help            Show this screen.
   --all                Do all the components
+  --filter=SELECTOR    Filter components based on selector
+                       (e.g. --filter=relase-process=docker)
   --version            Show version.
   --conf=FILE          Configuration file location [default: builder.ini]
   --with-versions      Print out all items of interest, with versions
@@ -34,10 +37,15 @@ def cli(out=sys.stdout):
     b = build.Builder(arguments['--conf'])
     b.configure()
 
+    selectors = arguments['--filter']
+    if selectors:
+        selectors = selectors.split(',')
+
     components = discover.run(
         b.components,
         arguments.get('<component>', []),
-        arguments['--all']
+        arguments['--all'],
+        selectors,
     )
     envs.set_envs(components)
 

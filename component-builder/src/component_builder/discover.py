@@ -1,3 +1,4 @@
+from functools import partial
 from .component import Tree
 from .utils import bash
 
@@ -13,15 +14,30 @@ def get_changed(candidates, branch=None):
     return filter(is_changed, candidates)
 
 
-def run(components, label_filter=None, get_all=False):
+def filter_by(selectors, components):
+
+    def matches_selector(selector, component):
+        key, value = selector.split('=')
+        return component.ini.get(key) == value
+
+    for selector in selectors:
+        components = filter(partial(matches_selector, selector), components)
+
+    return list(components)
+
+
+def run(components, component_names=None, get_all=False, selectors=None):
     "Get paths and titles of changed components"
-    if label_filter and get_all:
+    if component_names and get_all:
         print("Asked to filter and get all. Assuming filter...")
-    if label_filter:
-        candidates = [components[x] for x in label_filter]
+    if component_names:
+        candidates = [components[x] for x in component_names]
     else:
         candidates = components.values()
         if not get_all:
             candidates = get_changed(candidates)
         candidates = Tree.ordered(candidates)
+
+    if selectors:
+        candidates = filter_by(selectors, candidates)
     return candidates
