@@ -16,10 +16,13 @@ def read_component_configuration(builder_ini_file, root='.'):
     config.readfp(builder_ini_file)
     components = OrderedDict()
     for component in config.sections():
+        ini_section_dict = dict(config.items(component))
+
         kwargs = {
             'title': component,
             'release_process': config.get(component, 'release-process'),
-            'path': os.path.join(root, config.get(component, 'path'))
+            'path': os.path.join(root, config.get(component, 'path')),
+            'ini': ini_section_dict,
         }
         upstream = config.get(component, 'upstream')
         if upstream:

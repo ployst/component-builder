@@ -1,14 +1,11 @@
 import os
 from os.path import join, dirname
-# import shutil
-# import tempfile
 import unittest
 
 from mock import patch
 
-from component_builder import config
 from component_builder.build import Builder
-from component_builder.component import Component, Tree
+from component_builder.component import Tree
 from component_builder.envs import set_envs
 
 
@@ -28,7 +25,7 @@ class TestSetEnvs(unittest.TestCase):
         set_envs(self.ordered_candidates)
 
         self.assertEqual(
-            sorted(self.components['dummy-island-service'].env_string.split(' ')),
+            sorted(self.components['dummy-island-service'].env_string.split()),
             ['DOCKER_IMAGE=dummy-island-service', 'DOCKER_TAG=1.5.0.1',
              'REPORT_LOCATION=/reports/dummy-island-service',
              'VERSION=1.5.0.1']
@@ -38,7 +35,7 @@ class TestSetEnvs(unittest.TestCase):
         set_envs(self.ordered_candidates)
 
         self.assertEqual(
-            sorted(self.components['dummy-integration'].env_string.split(' ')),
+            sorted(self.components['dummy-integration'].env_string.split()),
             ['DOCKER_IMAGE=dummy-integration',
              'DOCKER_TAG=2.0.0.1',
              'DUMMY_APP_DOCKER_IMAGE=dummy-app:5.4.0.1',
@@ -51,7 +48,7 @@ class TestSetEnvs(unittest.TestCase):
 
         set_envs(self.ordered_candidates)
         self.assertEqual(
-            sorted(self.components['dummy-app'].env_string.split(' ')),
+            sorted(self.components['dummy-app'].env_string.split()),
             ['ANOTHER_VAR=$CIRCLE_MAGIC', 'DOCKER_IMAGE=dummy-app',
              'DOCKER_TAG=5.4.0.1', 'REPORT_LOCATION=/reports/dummy-app',
              'VERSION=5.4.0.1']

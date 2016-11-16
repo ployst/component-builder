@@ -5,7 +5,8 @@ class Component(object):
 
     all = {}
 
-    def __init__(self, title, path, release_process='', upstream=None):
+    def __init__(self, title, path, release_process='', upstream=None,
+                 ini=None):
         """
         title: Name of the component. Used for docker images and more...
         path: Path to the component (within which a makefile will be found)
@@ -20,6 +21,7 @@ class Component(object):
         self.env = {}
         self.all[title] = self
         self.path = path
+        self.ini = ini
 
     def branch_name(self, label='stable'):
         return "{0}-{1}".format(label, self.title)
