@@ -1,15 +1,22 @@
-"""
+import json
+import sys
+
+from docopt import docopt
+
+from . import build, discover, envs, github, release
+
+
+USAGE = """
 Intelligent builder for working with component-based repositories
 
 Usage:
-  compbuild discover [--all] [--filter=SELECTOR] [--with-versions] \
-[--conf=FILE]
-  compbuild build [<component>...] [--all] [--conf=FILE]
-  compbuild env [<component>...] [--all] [--conf=FILE]
-  compbuild release [<component>...] [--all] [--conf=FILE]
-  compbuild test [<component>...] [--all] [--conf=FILE]
-  compbuild tag [<component>...] [--all] [--conf=FILE]
-  compbuild label <label> [<component>...] [--all] [--conf=FILE]
+  compbuild discover [--with-versions] {common}
+  compbuild build [<component>...] {common}
+  compbuild env [<component>...] {common}
+  compbuild release [<component>...] {common}
+  compbuild test [<component>...] {common}
+  compbuild tag [<component>...] {common}
+  compbuild label <label> [<component>...] {common}
   compbuild -h | --help
   compbuild --version
 
@@ -22,17 +29,13 @@ Options:
   --conf=FILE          Configuration file location [default: builder.ini]
   --with-versions      Print out all items of interest, with versions
 
-"""
-import json
-import sys
-
-from docopt import docopt
-
-from . import build, discover, envs, github, release
+""".format(
+    common='[--all] [--filter=SELECTOR] [--conf=FILE]'
+)
 
 
 def cli(out=sys.stdout):
-    arguments = docopt(__doc__, version='1.0')
+    arguments = docopt(USAGE, version='1.0')
 
     b = build.Builder(arguments['--conf'])
     b.configure()
