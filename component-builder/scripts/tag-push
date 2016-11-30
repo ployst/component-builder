@@ -1,18 +1,21 @@
 #! /bin/bash
+# Optional environment variables:
+#   DOCKER_PRE_PUSH:  Command to run before pushing images (e.g. authentication)
+#   STABLE_TAG:       An optional additional tag to add to images to mark them as stable
 
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
-STABLE_TAG=stable
 DOCKER_CMD_AUTHED=${DOCKER_CMD_AUTHED:-"docker"}
 
 docker tag $DOCKER_IMAGE:$DOCKER_TAG $REMOTE_DOCKER_PATH/$DOCKER_IMAGE:$DOCKER_TAG
-docker tag $DOCKER_IMAGE:$DOCKER_TAG $REMOTE_DOCKER_PATH/$DOCKER_IMAGE:$STABLE_TAG
 
 if [ "${DOCKER_PRE_PUSH}" != "" ]; then
     echo "Pre-push command:" ${DOCKER_PRE_PUSH}
     eval $DOCKER_PRE_PUSH
 fi
 
-exec $DOCKER_CMD_AUTHED push $REMOTE_DOCKER_PATH/$DOCKER_IMAGE:$DOCKER_TAG
-exec $DOCKER_CMD_AUTHED push $REMOTE_DOCKER_PATH/$DOCKER_IMAGE:$STABLE_TAG
+eval $DOCKER_CMD_AUTHED push $REMOTE_DOCKER_PATH/$DOCKER_IMAGE:$DOCKER_TAG
 
-# TODO: Remove stable stuff from here. Have the caller decide
+if [ "${STABLE_TAG}" != "" ]; then
+    docker tag $DOCKER_IMAGE:$DOCKER_TAG $REMOTE_DOCKER_PATH/$DOCKER_IMAGE:$STABLE_TAG
+    eval $DOCKER_CMD_AUTHED push $REMOTE_DOCKER_PATH/$DOCKER_IMAGE:$STABLE_TAG
+fi
