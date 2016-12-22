@@ -8,6 +8,7 @@
 build:
 	echo "${VERSION}" > VERSION.txt
 	pip install tox
+	pip install flake8
 
 test:
 	bash adi/test.sh

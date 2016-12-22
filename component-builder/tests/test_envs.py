@@ -27,6 +27,7 @@ class TestSetEnvs(unittest.TestCase):
         self.assertEqual(
             sorted(self.components['dummy-island-service'].env_string.split()),
             ['DOCKER_IMAGE=dummy-island-service', 'DOCKER_TAG=1.5.0.1',
+             'NAME=dummy-island-service',
              'REPORT_LOCATION=/reports/dummy-island-service',
              'VERSION=1.5.0.1']
         )
@@ -39,6 +40,7 @@ class TestSetEnvs(unittest.TestCase):
             ['DOCKER_IMAGE=dummy-integration',
              'DOCKER_TAG=2.0.0.1',
              'DUMMY_APP_DOCKER_IMAGE=dummy-app:5.4.0.1',
+             'NAME=dummy-integration',
              'REPORT_LOCATION=/reports/dummy-integration',
              'VERSION=2.0.0.1']
         )
@@ -50,7 +52,8 @@ class TestSetEnvs(unittest.TestCase):
         self.assertEqual(
             sorted(self.components['dummy-app'].env_string.split()),
             ['ANOTHER_VAR=$CIRCLE_MAGIC', 'DOCKER_IMAGE=dummy-app',
-             'DOCKER_TAG=5.4.0.1', 'REPORT_LOCATION=/reports/dummy-app',
+             'DOCKER_TAG=5.4.0.1', 'NAME=dummy-app',
+             'REPORT_LOCATION=/reports/dummy-app',
              'VERSION=5.4.0.1']
         )
 
@@ -63,6 +66,7 @@ class TestSetEnvs(unittest.TestCase):
             ['DOCKER_IMAGE=dummy-app',
              'DOCKER_TAG=5.4.0.1',
              'LOCAL_VAR=buildermagic',
+             'NAME=dummy-app',
              'REPORT_LOCATION=/reports/dummy-app',
              'VERSION=5.4.0.1']
         )

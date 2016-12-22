@@ -56,6 +56,7 @@ def set_envs(components):
         report_location = ensure_report_location(comp_name)
         version = get_version(comp)
         comp_env_dict = {
+            'NAME': comp_name,
             'DOCKER_IMAGE': comp_name,
             'DOCKER_TAG': version,
             'REPORT_LOCATION': report_location,
