@@ -1,4 +1,5 @@
 from io import StringIO
+import os
 from os.path import abspath, dirname, join
 import unittest
 
@@ -82,10 +83,15 @@ class TestCli(unittest.TestCase):
     @patch('sys.argv', ['compbuild', 'foo', '--all',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_custom_commands(self):
-        s = StringIO()
-        cli(out=s)
+        script_out = '/tmp/foo-out'
+        try:
+            os.remove(script_out)
+        except OSError:
+            pass
+
+        cli()
 
         self.assertEqual(
-            s.getvalue(),
-            "bar\n"
+            file(script_out).read(),
+            "bar dummy-app\nbar dummy-integration\nbar dummy-island-service\n"
         )
