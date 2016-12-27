@@ -21,8 +21,15 @@ def convert_dict_to_env_string(envdict):
 
 
 def make(path, cmd, envs="", options="", output_console=False):
-    full_cmd = 'cd {path} && {envs} make {0} {1}'.format(
-        options, cmd, path=path, envs=envs)
+    cmd = 'make {0} {1}'.format(options, cmd)
+    return component_script(
+        path=path, script=cmd, envs=envs, output_console=output_console
+    )
+
+
+def component_script(path, script, envs="", output_console=False):
+    full_cmd = 'cd {path} && {envs} {0}'.format(
+        script, path=path, envs=envs)
     bashkw = {}
 
     if output_console:
