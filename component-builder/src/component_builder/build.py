@@ -69,7 +69,7 @@ class Builder(object):
                 comp.path,
                 script_path,
                 envs=comp.env_string,
-                output_console=True
+                output_console=False
             )
             if b.code != 0:
                 errors.append(comp.title)
