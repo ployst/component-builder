@@ -92,6 +92,6 @@ class TestCli(unittest.TestCase):
         cli()
 
         self.assertEqual(
-            file(script_out).read(),
+            open(script_out).read(),
             "bar dummy-app\nbar dummy-integration\nbar dummy-island-service\n"
         )
