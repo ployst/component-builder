@@ -61,7 +61,7 @@ def update_branch(branch_name):
     repo = get_repo()
 
     b = repo.ref('heads/{0}'.format(branch_name))
-    if b:
+    if b and not isinstance(b, github3.exceptions.UnprocessableResponseBody):
         b.update(sha, force=True)
     else:
         repo.create_ref('refs/heads/{0}'.format(branch_name), sha)
