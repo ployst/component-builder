@@ -78,3 +78,14 @@ class TestCli(unittest.TestCase):
                 ''
             ])
         )
+
+    @patch('sys.argv', ['compbuild', 'foo', '--all',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    def test_custom_commands(self):
+        s = StringIO()
+        cli(out=s)
+
+        self.assertEqual(
+            s.getvalue(),
+            "bar\n"
+        )

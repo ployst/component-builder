@@ -1,7 +1,7 @@
 import os.path
 
 from . import config, github
-from .utils import make
+from .utils import make, component_script
 
 
 class BuilderFailure(Exception):
@@ -50,10 +50,31 @@ class Builder(object):
         self.path = os.path.dirname(self.builder_file)
 
     def configure(self):
-        self.components = config.read_component_configuration(
+        self.config, self.components = config.read_configuration(
             open(self.builder_file), root=self.path
         )
+
         return self.components
+
+    def custom(self, script_name, components):
+
+        if script_name not in self.config['custom_scripts']:
+            raise Exception("'{0}' not found in '[compbuild:custom_scripts]' "
+                            "section of builder.ini".format(script_name))
+        errors = []
+        script = self.config['custom_scripts'][script_name]
+        script_path = os.path.abspath(os.path.join(self.path, script))
+        for comp in components:
+            b = component_script(
+                comp.path,
+                script_path,
+                envs=comp.env_string,
+                output_console=True
+            )
+            if b.code != 0:
+                errors.append(comp.title)
+        if errors:
+            raise BuilderFailure(script_name, errors)
 
 
 def run(mode, components, status_callback=None, optional=False):
