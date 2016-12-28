@@ -15,7 +15,7 @@ def read_configuration(builder_ini_file, root='.'):
     })
     config.readfp(builder_ini_file)
     component_config = OrderedDict()
-    builder_config = {}
+    builder_config = {'custom_scripts': {}}
 
     for component in config.sections():
         ini_section_dict = dict(config.items(component))
