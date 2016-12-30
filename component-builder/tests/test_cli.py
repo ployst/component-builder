@@ -80,7 +80,7 @@ class TestCli(unittest.TestCase):
             ])
         )
 
-    @patch('sys.argv', ['compbuild', 'foo', '--all',
+    @patch('sys.argv', ['compbuild', 'build', '--all',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_custom_commands(self):
         script_out = '/tmp/foo-out'
