@@ -33,6 +33,8 @@ def component_script(path, script, envs="", output_console=False):
     bashkw = {}
 
     if output_console:
-        bashkw = {'stdout': sys.stdout, 'stderr': sys.stderr}
+        # Ignore if running --xunit tests (identified by use of Tee)
+        if sys.stdout.__class__.__name__ != 'Tee':
+            bashkw = {'stdout': sys.stdout, 'stderr': sys.stderr}
 
     return bash(full_cmd, **bashkw)

@@ -56,25 +56,28 @@ class Builder(object):
 
         return self.components
 
-    def custom(self, script_name, components):
+    def hook(self, hook_name, components):
+        script_name = self.config['hooks'].get(hook_name)
+        if script_name:
+            errors = []
+            script_path = os.path.abspath(os.path.join(self.path, script_name))
+            for comp in components:
+                b = component_script(
+                    comp.path,
+                    script_path,
+                    envs=comp.env_string,
+                    output_console=False
+                )
+                if b.code != 0:
+                    errors.append(comp.title)
+            if errors:
+                raise BuilderFailure(script_name, errors)
 
-        if script_name not in self.config['custom_scripts']:
-            raise Exception("'{0}' not found in '[compbuild:custom_scripts]' "
-                            "section of builder.ini".format(script_name))
-        errors = []
-        script = self.config['custom_scripts'][script_name]
-        script_path = os.path.abspath(os.path.join(self.path, script))
-        for comp in components:
-            b = component_script(
-                comp.path,
-                script_path,
-                envs=comp.env_string,
-                output_console=False
-            )
-            if b.code != 0:
-                errors.append(comp.title)
-        if errors:
-            raise BuilderFailure(script_name, errors)
+    def pre(self, stage, components):
+        return self.hook('pre-{}'.format(stage), components)
+
+    def post(self, stage, components):
+        return self.hook('post-{}'.format(stage), components)
 
 
 def run(mode, components, status_callback=None, optional=False):
