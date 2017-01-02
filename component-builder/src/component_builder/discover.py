@@ -7,9 +7,9 @@ def get_changed(candidates, branch=None):
 
     def is_changed(candidate):
         name = branch or candidate.branch_name('stable')
-
-        b = bash('git log --oneline origin/{branch}..HEAD '
-                 '-- {0} || echo "1"'.format(candidate.path, branch=name))
+        cmd = ('git diff --shortstat origin/{branch} '
+               '-- {0} || echo "1"'.format(candidate.path, branch=name))
+        b = bash(cmd)
         return b.value().strip() != ''
     return filter(is_changed, candidates)
 
