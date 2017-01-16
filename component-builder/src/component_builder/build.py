@@ -94,13 +94,20 @@ def run(mode, components, status_callback=None, optional=False):
         if optional and not command_exists(comp, mode):
             print("Not available")
             continue
-        b = make(
-            comp.path, mode, envs=comp.env_string, output_console=True)
-        if b.code != 0:
+        success = True
+        try:
+            b = make(
+                comp.path, mode, envs=comp.env_string, output_console=True)
+            if b.code != 0:
+                success = False
+        except Exception:
+            success = False
+
+        if success:
+            mark_commit_status(mode, comp_name, 'success')
+        else:
             errors.append(comp_name)
             mark_commit_status(mode, comp_name, 'error')
-        else:
-            mark_commit_status(mode, comp_name, 'success')
 
     if errors:
         raise BuilderFailure(mode, errors)
