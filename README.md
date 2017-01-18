@@ -196,7 +196,8 @@ GIT_TAGGER_EMAIL
 
 ## Development
 
-$ pip install -e builder
+$ echo "0.1" > component-builder/VERSION.txt
+$ pip install -e component-builder
 
 Now you can play with it!
 
