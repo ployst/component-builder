@@ -79,19 +79,21 @@ def validate_pr_url(pr_url):
         )
 
 
-def add_pr_component_label(pr_url, title):
-    new_label = 'component:{0}'.format(title)
+def add_pr_components_labels(pr_url, titles):
     validate_pr_url(pr_url)
     issue_id = pr_url.split('/')[-1]
     repo = get_repo()
     issue = repo.issue(issue_id)
 
-    for l in issue.labels():
-        if l.name == new_label:
+    new_labels = ['component:{0}'.format(title) for title in titles]
+    for label in issue.labels():
+        if label.name in new_labels:
             # Already added to the issue
-            return
-
-    issue.add_labels(new_label)
+            new_labels.remove(label.name)
+        else:
+            # Should not exist anymore
+            issue.remove_label(label.name)
+    issue.add_labels(new_labels)
 
 
 class ValidationError(Exception):

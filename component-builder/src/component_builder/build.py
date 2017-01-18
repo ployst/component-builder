@@ -31,12 +31,12 @@ def mark_commit_status(*args, **kwargs):
         return github.mark_status_for_component(*args, **kwargs)
 
 
-def declare_component_usage(title):
+def declare_components_usage(titles):
     if os.environ.get('INTERACT_WITH_GITHUB'):
         prs = os.environ.get('PULL_REQUEST_NAMES', '')
         for pr_url in prs.split(','):
             if pr_url:
-                github.add_pr_component_label(pr_url, title)
+                github.add_pr_components_labels(pr_url, titles)
 
 
 def command_exists(component, command):
@@ -83,9 +83,11 @@ class Builder(object):
 def run(mode, components, status_callback=None, optional=False):
     errors = []
 
+    titles = []
     for comp in components:
-        declare_component_usage(comp.title)
+        titles.append(comp.title)
         mark_commit_status(mode, comp.title, 'pending')
+    declare_components_usage(titles)
 
     for comp in components:
         comp_name = comp.title
