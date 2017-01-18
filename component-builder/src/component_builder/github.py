@@ -86,13 +86,15 @@ def add_pr_components_labels(pr_url, titles):
     issue = repo.issue(issue_id)
 
     new_labels = ['component:{0}'.format(title) for title in titles]
-    for label in issue.labels():
-        if label.name in new_labels:
+    component_labels = [
+        l.name for l in issue.labels() if l.name.startwith('component:')]
+    for label in component_labels:
+        if label in new_labels:
             # Already added to the issue
-            new_labels.remove(label.name)
+            new_labels.remove(label)
         else:
             # Should not exist anymore
-            issue.remove_label(label.name)
+            issue.remove_label(label)
     issue.add_labels(new_labels)
 
 
