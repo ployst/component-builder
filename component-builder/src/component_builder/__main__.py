@@ -10,7 +10,7 @@ USAGE = """
 Intelligent builder for working with component-based repositories
 
 Usage:
-  compbuild discover [--with-versions] [--vs-branch=BRANCH]{common}
+  compbuild discover [--with-versions] [--vs-branch=BRANCH] {common}
   compbuild build [<component>...] {common}
   compbuild env [<component>...] {common}
   compbuild release [<component>...] {common}
@@ -34,7 +34,7 @@ Options:
                        component.
 
 """.format(
-    common='[--all] [--filter=SELECTOR] [--conf=FILE]'
+    common='[--all] [--filter=SELECTOR ...] [--conf=FILE]'
 )
 
 
@@ -44,9 +44,11 @@ def cli(out=sys.stdout):
     b = build.Builder(arguments['--conf'])
     b.configure()
 
-    selectors = arguments['--filter']
-    if selectors:
-        selectors = selectors.split(',')
+    selectors = set()
+    filters = arguments['--filter']
+    for fltr in filters:
+        selectors.update(fltr.split(','))
+    selectors = list(selectors)
 
     components = discover.run(
         b.components,

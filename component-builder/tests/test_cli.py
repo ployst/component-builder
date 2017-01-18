@@ -80,6 +80,22 @@ class TestCli(unittest.TestCase):
             ])
         )
 
+    @patch('sys.argv', ['compbuild', 'discover', '--all',
+                        '--filter=release-process=docker',
+                        '--filter=label=app',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    def test_discover_filter_by_multiple_arguments(self):
+        s = StringIO()
+        cli(out=s)
+
+        self.assertEqual(
+            s.getvalue(),
+            '\n'.join([
+                'dummy-app',
+                ''
+            ])
+        )
+
     @patch('sys.argv', ['compbuild', 'build', '--all',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_custom_commands(self):
@@ -96,7 +112,7 @@ class TestCli(unittest.TestCase):
             "bar dummy-app\nbar dummy-integration\nbar dummy-island-service\n"
         )
 
-    @patch('sys.argv', ['compbuild', 'discover', '--vs-branch=master', 
+    @patch('sys.argv', ['compbuild', 'discover', '--vs-branch=master',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_discover_only_finds_changes(self):
         s = StringIO()
@@ -111,7 +127,7 @@ class TestCli(unittest.TestCase):
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_discover_local_uncommitted_changes_count(self):
         def setup_changed_file():
-            local_file = join(dirname(TEST_BUILDER_CONF), 
+            local_file = join(dirname(TEST_BUILDER_CONF),
                               'dummy-island-service/Makefile')
             orig_content = open(local_file, 'r').read()
             def write_to_file(filename, content):
@@ -125,11 +141,11 @@ class TestCli(unittest.TestCase):
                 '\techo "1.5.${BUILD_IDENTIFIER}"'
             )
             write_to_file(
-                local_file, 
+                local_file,
                 test_makefile
             )
             self.addCleanup(write_to_file, local_file, orig_content)
-        
+
         setup_changed_file()
         s = StringIO()
         cli(out=s)
