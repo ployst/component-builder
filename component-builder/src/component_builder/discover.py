@@ -17,8 +17,17 @@ def get_changed(candidates, branch=None):
 def filter_by(selectors, components):
 
     def matches_selector(selector, component):
-        key, value = selector.split('=')
-        return component.ini.get(key) == value
+        sep = '='
+        exclude = False
+        if '!=' in selector:
+            sep = '!='
+            exclude = True
+
+        key, value = selector.split(sep)
+        if exclude:
+            return component.ini.get(key) != value
+        else:
+            return component.ini.get(key) == value
 
     for selector in selectors:
         components = filter(partial(matches_selector, selector), components)
