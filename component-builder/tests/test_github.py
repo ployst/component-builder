@@ -1,3 +1,4 @@
+import six
 import unittest
 
 from component_builder import github
@@ -17,3 +18,25 @@ class TestValidatePRURL(unittest.TestCase):
             self.assertRaises(
                 github.ValidationError, github.validate_pr_url, invalid
             )
+
+
+class Label(object):
+    def __init__(self, name):
+        self.name = name
+
+    def name(self):
+        return self.name
+
+
+class TestAddPRComponentsLabels(unittest.TestCase):
+
+    def test_replace_labels(self):
+        component_titles = ['library', 'service']
+        current_labels = [
+            Label('component:tool'), Label('component:service'),
+            Label('not-a-component')]
+        to_add, to_del = github.replace_labels(
+            component_titles, current_labels)
+
+        six.assertCountEqual(self, to_add, ['component:library'])
+        six.assertCountEqual(self, to_del, ['component:tool'])
