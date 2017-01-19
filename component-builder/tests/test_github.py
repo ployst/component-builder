@@ -1,5 +1,7 @@
-import six
 import unittest
+
+import six
+from mock import Mock, patch
 
 from component_builder import github
 
@@ -30,13 +32,33 @@ class Label(object):
 
 class TestAddPRComponentsLabels(unittest.TestCase):
 
-    def test_replace_labels(self):
-        component_titles = ['library', 'service']
-        current_labels = [
+    def setUp(self):
+        self.component_titles = ['library', 'service']
+        self.current_labels = [
             Label('component:tool'), Label('component:service'),
             Label('not-a-component')]
+
+    def test_replace_labels(self):
         to_add, to_del = github.replace_labels(
-            component_titles, current_labels)
+            self.component_titles, self.current_labels)
 
         six.assertCountEqual(self, to_add, ['component:library'])
         six.assertCountEqual(self, to_del, ['component:tool'])
+
+    @patch('component_builder.github.get_repo')
+    def test_add_pr_components_labels(self, get_repo):
+        issue = Mock()
+        issue.labels.return_value = self.current_labels
+        repo = Mock()
+        repo.issue.return_value = issue
+        get_repo.return_value = repo
+
+        pr_url = 'http://github.com/ployst/ployst/pulls/1'
+        github.add_pr_components_labels(pr_url, self.component_titles)
+
+        repo.issue.assert_called_once_with('1')
+        issue.labels.assert_called_once_with()
+        issue.remove_label.assert_called_once_with('component:tool')
+        issue.add_labels.assert_called_once_with('component:library')
+        self.assertEqual(len(repo.method_calls), 1)
+        self.assertEqual(len(issue.method_calls), 3)
