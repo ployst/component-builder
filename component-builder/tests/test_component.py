@@ -61,7 +61,7 @@ class TestDependencies(unittest.TestCase):
 
     def setUp(self):
         s = StringIO(dedent(
-         u"""
+            u"""
             [ui]
             path=ui
 

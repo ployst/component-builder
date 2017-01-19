@@ -94,7 +94,7 @@ class TestCli(unittest.TestCase):
                 ''
             ])
         )
-    
+
     @patch('sys.argv', ['compbuild', 'discover', '--all',
                         '--filter=release-process=docker',
                         '--filter=label=app',
@@ -145,13 +145,14 @@ class TestCli(unittest.TestCase):
             local_file = join(dirname(TEST_BUILDER_CONF),
                               'dummy-island-service/Makefile')
             orig_content = open(local_file, 'r').read()
+
             def write_to_file(filename, content):
                 with open(filename, 'w') as new:
                     new.write(content)
 
             test_makefile = (
-                '#test data from test_discover_local_uncommitted_changes_count\n'
-                '\n'
+                '#test data from test_discover_local_uncommitted_changes_count'
+                '\n\n'
                 'version:\n'
                 '\techo "1.5.${BUILD_IDENTIFIER}"'
             )
@@ -168,4 +169,17 @@ class TestCli(unittest.TestCase):
         self.assertEqual(
             s.getvalue(),
             'dummy-island-service\n'
+        )
+
+    @patch('sys.argv', ['compbuild', 'get', 'label', '--all',
+                        '--filter=release-process=docker',
+                        '--filter=label=app',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    def test_get_ini_value(self):
+        s = StringIO()
+        cli(out=s)
+
+        self.assertEqual(
+            s.getvalue(),
+            'dummy-app:app\n'
         )

@@ -17,7 +17,7 @@ Usage:
   compbuild test [<component>...] {common}
   compbuild tag [<component>...] {common}
   compbuild label <label> [<component>...] {common}
-  compbuild <action> [<component>...] {common}
+  compbuild get <attr> [<component>...] {common}
   compbuild -h | --help
   compbuild --version
 
@@ -87,6 +87,14 @@ def cli(out=sys.stdout):
         release.run(components)
     elif arguments['env']:
         out.write("\n".join(json.dumps(c.env, indent=4) for c in components))
+    elif arguments['get']:
+        tmpl = u"{title}:{attr}"
+        for c in components:
+            out.write(
+                tmpl.format(
+                    title=c.title,
+                    attr=c.ini.get(arguments['<attr>'], "")) + '\n'
+            )
 
 
 if __name__ == '__main__':
