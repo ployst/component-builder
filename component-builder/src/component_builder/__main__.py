@@ -91,8 +91,11 @@ def cli(out=sys.stdout):
         tmpl = u"{title}:{attr}"
         for c in components:
             out.write(
-                tmpl.format(title=c.title, attr=c.ini.get(arguments['<attr>'], "")) + '\n'
+                tmpl.format(
+                    title=c.title,
+                    attr=c.ini.get(arguments['<attr>'], "")) + '\n'
             )
+
 
 if __name__ == '__main__':
     cli()
