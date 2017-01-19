@@ -1,3 +1,4 @@
+import six
 import unittest
 
 from component_builder import github
@@ -37,5 +38,5 @@ class TestAddPRComponentsLabels(unittest.TestCase):
         to_add, to_del = github.replace_labels(
             component_titles, current_labels)
 
-        self.assertItemsEqual(to_add, ['component:library'])
-        self.assertItemsEqual(to_del, ['component:tool'])
+        six.assertCountEqual(self, to_add, ['component:library'])
+        six.assertCountEqual(self, to_del, ['component:tool'])
