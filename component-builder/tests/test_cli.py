@@ -94,7 +94,7 @@ class TestCli(unittest.TestCase):
                 ''
             ])
         )
-    
+
     @patch('sys.argv', ['compbuild', 'discover', '--all',
                         '--filter=release-process=docker',
                         '--filter=label=app',
@@ -168,4 +168,18 @@ class TestCli(unittest.TestCase):
         self.assertEqual(
             s.getvalue(),
             'dummy-island-service\n'
+        )
+
+
+    @patch('sys.argv', ['compbuild', 'get', 'label', '--all',
+                        '--filter=release-process=docker',
+                        '--filter=label=app',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    def test_get_ini_value(self):
+        s = StringIO()
+        cli(out=s)
+
+        self.assertEqual(
+            s.getvalue(),
+            'dummy-app:app\n'
         )
