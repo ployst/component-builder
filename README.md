@@ -84,6 +84,7 @@ Any component defined in builder.ini will be treated as a first class citizen.
 
 ## Typical Flow
 
+    $ compbuild declare
     $ compbuild build
     $ compbuild test
     $ compbuild label 'stable'
@@ -179,20 +180,29 @@ GIT_TAGGER_EMAIL
     Intelligent builder for working with component-based repositories
 
     Usage:
-      compbuild discover [--all]
-      compbuild build [<component>...] [--all]
-      compbuild env [<component>...] [--all]
-      compbuild release [<component>...] [--all]
-      compbuild test [<component>...] [--all]
-      compbuild tag [<component>...] [--all]
-      compbuild label <label> [<component>...] [--all]
+      compbuild discover [--with-versions] [--vs-branch=BRANCH] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild declare [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild build [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild test [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild label <label> [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild tag [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild release [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild get <attr> [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
+      compbuild env [<component>...] [--all] [--filter=SELECTOR ...] [--conf=FILE]
       compbuild -h | --help
       compbuild --version
 
     Options:
       -h --help            Show this screen.
       --all                Do all the components
+      --filter=SELECTOR    Filter components based on selector
+                           (e.g. --filter=relase-process=docker)
       --version            Show version.
+      --conf=FILE          Configuration file location [default: builder.ini]
+      --with-versions      Print out all items of interest, with versions
+      --vs-branch=BRANCH   Discover changes made compared to BRANCH. If not set,
+                           comparison will be to latest staging branch for each
+                           component.
 
 ## Development
 
