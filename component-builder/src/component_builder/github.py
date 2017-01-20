@@ -1,8 +1,8 @@
 import datetime
 import os
-import pytz
 
 import github3
+import pytz
 
 
 def get_sha():
@@ -98,7 +98,7 @@ def add_pr_components_labels(pr_url, titles):
 
     to_add, to_del = replace_labels(titles, issue.labels())
     for label in to_del:
-        issue.remove(label)
+        issue.remove_label(label)
     issue.add_labels(*to_add)
 
 
