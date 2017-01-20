@@ -5,19 +5,19 @@ from docopt import docopt
 
 from . import build, discover, envs, github, release
 
-
 USAGE = """
 Intelligent builder for working with component-based repositories
 
 Usage:
   compbuild discover [--with-versions] [--vs-branch=BRANCH] {common}
+  compbuild declare [<component>...] {common}
   compbuild build [<component>...] {common}
-  compbuild env [<component>...] {common}
-  compbuild release [<component>...] {common}
   compbuild test [<component>...] {common}
-  compbuild tag [<component>...] {common}
   compbuild label <label> [<component>...] {common}
+  compbuild tag [<component>...] {common}
+  compbuild release [<component>...] {common}
   compbuild get <attr> [<component>...] {common}
+  compbuild env [<component>...] {common}
   compbuild -h | --help
   compbuild --version
 
@@ -67,6 +67,8 @@ def cli(out=sys.stdout):
             out.write(
                 tmpl.format(title=c.title, version=c.env['VERSION']) + '\n'
             )
+    elif arguments['declare']:
+        build.declare_components_usage(components)
     elif arguments['build']:
         b.pre('build', components)
         build.run('build', components)

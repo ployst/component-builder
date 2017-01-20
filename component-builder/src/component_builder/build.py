@@ -1,7 +1,7 @@
 import os.path
 
 from . import config, github
-from .utils import make, component_script
+from .utils import component_script, make
 
 
 class BuilderFailure(Exception):
@@ -31,8 +31,9 @@ def mark_commit_status(*args, **kwargs):
         return github.mark_status_for_component(*args, **kwargs)
 
 
-def declare_components_usage(titles):
+def declare_components_usage(components):
     if os.environ.get('INTERACT_WITH_GITHUB'):
+        titles = [c.title for c in components]
         prs = os.environ.get('PULL_REQUEST_NAMES', '')
         for pr_url in prs.split(','):
             if pr_url:
@@ -83,11 +84,8 @@ class Builder(object):
 def run(mode, components, status_callback=None, optional=False):
     errors = []
 
-    titles = []
     for comp in components:
-        titles.append(comp.title)
         mark_commit_status(mode, comp.title, 'pending')
-    declare_components_usage(titles)
 
     for comp in components:
         comp_name = comp.title

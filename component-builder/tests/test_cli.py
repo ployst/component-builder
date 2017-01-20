@@ -1,7 +1,7 @@
-from io import StringIO
 import os
-from os.path import abspath, dirname, join
 import unittest
+from io import StringIO
+from os.path import abspath, dirname, join
 
 from mock import patch
 
@@ -183,3 +183,33 @@ class TestCli(unittest.TestCase):
             s.getvalue(),
             'dummy-app:app\n'
         )
+
+
+class TestCliDeclare(unittest.TestCase):
+
+    @patch('component_builder.build.os.environ', {
+        'BUILD_IDENTIFIER': '1',
+        'INTERACT_WITH_GITHUB': 'anything',
+        'PULL_REQUEST_NAMES': 'http://github.com/ployst/ployst/pulls/1',
+    })
+    @patch('sys.argv', ['compbuild', 'declare',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    @patch('component_builder.build.github.add_pr_components_labels')
+    def test_declare_calls_add_pr_components_labels_correctly(self, add_pr):
+        s = StringIO()
+        cli(out=s)
+
+        add_pr.assert_called_once_with(
+            'http://github.com/ployst/ployst/pulls/1',
+            ['dummy-app', 'dummy-integration', 'dummy-island-service']
+        )
+
+    @patch('component_builder.build.os.environ', {'BUILD_IDENTIFIER': '1'})
+    @patch('sys.argv', ['compbuild', 'declare',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    @patch('component_builder.build.github.add_pr_components_labels')
+    def test_declare_does_not_call_add_pr_components_labels(self, add_pr):
+        s = StringIO()
+        cli(out=s)
+
+        add_pr.assert_not_called()
