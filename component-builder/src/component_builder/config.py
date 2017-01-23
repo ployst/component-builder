@@ -40,6 +40,11 @@ def read_configuration(builder_ini_file, root='.'):
             c = Component(**kwargs)
             component_config[c.title] = c
 
+    for component in component_config.values():
+        downstream_titles = [
+            comp.title for comp in component.get_downstream_builds()]
+        component.ini['downstream'] = ','.join(downstream_titles)
+
     return builder_config, component_config
 
 

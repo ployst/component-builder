@@ -102,3 +102,36 @@ class TestDependencies(unittest.TestCase):
             sorted([d.title for d in upstream]),
             ['service-A', 'ui']
         )
+
+
+class TestDownstreamLabel(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        s = StringIO(dedent(
+            u"""
+            [ui]
+            path=ui
+
+            [service-A]
+            path=service-a
+
+            [integration]
+            path=integration
+            upstream=service-A,ui
+
+            [super-integration]
+            path=super-integration
+            upstream=integration
+            """))
+        cls.components = read_component_configuration(s)
+
+    def test_upstream_components_have_their_downstream_components(self):
+        self.assertEqual(
+            self.components['ui'].ini['downstream'],
+            'integration,super-integration')
+
+    def test_downstream_components_dont_have_downstream_components(self):
+        self.assertEqual(
+            self.components['super-integration'].ini['downstream'],
+            '')
