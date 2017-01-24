@@ -12,6 +12,28 @@ TEST_BUILDER_CONF = abspath(
 )
 
 
+def setup_changed_file(testcase, component):
+    local_file = join(dirname(TEST_BUILDER_CONF),
+                      component + '/Makefile')
+    orig_content = open(local_file, 'r').read()
+
+    def write_to_file(filename, content):
+        with open(filename, 'w') as new:
+            new.write(content)
+
+    test_makefile = (
+        '#test data from test_discover_local_uncommitted_changes_count'
+        '\n\n'
+        'version:\n'
+        '\techo "1.5.${BUILD_IDENTIFIER}"'
+    )
+    write_to_file(
+        local_file,
+        test_makefile
+    )
+    testcase.addCleanup(write_to_file, local_file, orig_content)
+
+
 @patch('component_builder.build.os.environ', {
     'BUILD_IDENTIFIER': '1'
 })
@@ -141,28 +163,7 @@ class TestCli(unittest.TestCase):
     @patch('sys.argv', ['compbuild', 'discover', '--vs-branch=master',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_discover_local_uncommitted_changes_count(self):
-        def setup_changed_file():
-            local_file = join(dirname(TEST_BUILDER_CONF),
-                              'dummy-island-service/Makefile')
-            orig_content = open(local_file, 'r').read()
-
-            def write_to_file(filename, content):
-                with open(filename, 'w') as new:
-                    new.write(content)
-
-            test_makefile = (
-                '#test data from test_discover_local_uncommitted_changes_count'
-                '\n\n'
-                'version:\n'
-                '\techo "1.5.${BUILD_IDENTIFIER}"'
-            )
-            write_to_file(
-                local_file,
-                test_makefile
-            )
-            self.addCleanup(write_to_file, local_file, orig_content)
-
-        setup_changed_file()
+        setup_changed_file(self, 'dummy-island-service')
         s = StringIO()
         cli(out=s)
 
@@ -187,12 +188,17 @@ class TestCli(unittest.TestCase):
 
 class TestCliDeclare(unittest.TestCase):
 
+    def setUp(self):
+        super(TestCliDeclare, self).setUp()
+        setup_changed_file(self, 'dummy-app')
+
     @patch('component_builder.build.os.environ', {
         'BUILD_IDENTIFIER': '1',
         'INTERACT_WITH_GITHUB': 'anything',
         'PULL_REQUEST_NAMES': 'http://github.com/ployst/ployst/pulls/1',
     })
     @patch('sys.argv', ['compbuild', 'declare',
+                        '--vs-branch=master',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     @patch('component_builder.build.github.add_pr_components_labels')
     def test_declare_calls_add_pr_components_labels_correctly(self, add_pr):
@@ -201,7 +207,7 @@ class TestCliDeclare(unittest.TestCase):
 
         add_pr.assert_called_once_with(
             'http://github.com/ployst/ployst/pulls/1',
-            ['dummy-app', 'dummy-integration', 'dummy-island-service']
+            ['dummy-app', 'dummy-integration']
         )
 
     @patch('component_builder.build.os.environ', {'BUILD_IDENTIFIER': '1'})
@@ -213,3 +219,22 @@ class TestCliDeclare(unittest.TestCase):
         cli(out=s)
 
         add_pr.assert_not_called()
+
+    @patch('component_builder.build.os.environ', {
+        'BUILD_IDENTIFIER': '1',
+        'INTERACT_WITH_GITHUB': 'anything',
+        'PULL_REQUEST_NAMES': 'http://github.com/ployst/ployst/pulls/1',
+    })
+    @patch('sys.argv', ['compbuild', 'declare',
+                        '--vs-branch=master',
+                        '--exclude-downstream',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    @patch('component_builder.build.github.add_pr_components_labels')
+    def test_exclude_downstream(self, add_pr):
+        s = StringIO()
+        cli(out=s)
+
+        add_pr.assert_called_once_with(
+            'http://github.com/ployst/ployst/pulls/1',
+            ['dummy-app']
+        )
