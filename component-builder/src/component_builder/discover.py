@@ -42,7 +42,7 @@ def filter_by(selectors, components):
 
 
 def run(components, component_names=None, get_all=False, compare_branch=None,
-        selectors=None):
+        selectors=None, include_downstream=True):
     "Get paths and titles of changed components"
     if component_names and get_all:
         print("Asked for specific components and get all. "
@@ -53,7 +53,8 @@ def run(components, component_names=None, get_all=False, compare_branch=None,
         candidates = components.values()
         if not get_all:
             candidates = get_changed(candidates, compare_branch)
-        candidates = Tree.ordered(candidates)
+
+        candidates = Tree.ordered(candidates, include_downstream)
 
     if selectors:
         candidates = filter_by(selectors, candidates)

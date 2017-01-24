@@ -81,11 +81,13 @@ class Tree(object):
         return branches[0]
 
     @classmethod
-    def ordered(cls, root_candidates):
+    def ordered(cls, root_candidates, include_downstream=True):
         branches = []
 
         for c in root_candidates:
-            branch = [c] + [c for c in c.get_downstream_builds()]
+            branch = [c]
+            if include_downstream:
+                branch += [c for c in c.get_downstream_builds()]
             branches.append(branch)
 
         return cls.merge_branches(*branches)

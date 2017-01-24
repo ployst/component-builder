@@ -9,7 +9,7 @@ USAGE = """
 Intelligent builder for working with component-based repositories
 
 Usage:
-  compbuild discover [--with-versions] [--vs-branch=BRANCH] {common}
+  compbuild discover [--with-versions] {common}
   compbuild declare [<component>...] {common}
   compbuild build [<component>...] {common}
   compbuild test [<component>...] {common}
@@ -32,9 +32,13 @@ Options:
   --vs-branch=BRANCH   Discover changes made compared to BRANCH. If not set,
                        comparison will be to latest staging branch for each
                        component.
+  --exclude-downstream  Only include directly changed things, not things that
+                        declare them as upstreams.
+
 
 """.format(
-    common='[--all] [--filter=SELECTOR ...] [--conf=FILE]'
+    common=('[--vs-branch=BRANCH] [--all] [--exclude-downstream] '
+            '[--filter=SELECTOR ...] [--conf=FILE]')
 )
 
 
@@ -56,6 +60,7 @@ def cli(out=sys.stdout):
         arguments['--all'],
         compare_branch=arguments['--vs-branch'],
         selectors=selectors,
+        include_downstream=not arguments['--exclude-downstream']
     )
     envs.set_envs(components)
 
