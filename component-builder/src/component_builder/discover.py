@@ -7,10 +7,16 @@ def get_changed(candidates, branch=None):
 
     def is_changed(candidate):
         name = branch or candidate.branch_name('stable')
-        cmd = ('git diff --shortstat origin/{branch} '
-               '-- {0} || echo "1"'.format(candidate.path, branch=name))
-        b = bash(cmd)
-        return b.value().strip() != ''
+        git_differs = [
+            'git diff --shortstat origin/{branch}..'.format(branch=name),
+            'git diff HEAD'
+        ]
+        for differ in git_differs:
+            cmd = ("{0} -- {1} || echo '1'".format(differ, candidate.path))
+            b = bash(cmd)
+            if b.value().strip() != '':
+                return True
+        return False
     return filter(is_changed, candidates)
 
 
