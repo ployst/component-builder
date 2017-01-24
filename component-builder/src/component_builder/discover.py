@@ -8,7 +8,7 @@ def get_changed(candidates, branch=None):
     def is_changed(candidate):
         name = branch or candidate.branch_name('stable')
         git_differs = [
-            'git diff --shortstat origin/{branch}..'.format(branch=name),
+            'git diff --shortstat origin/{branch}...'.format(branch=name),
             'git diff HEAD'
         ]
         for differ in git_differs:
