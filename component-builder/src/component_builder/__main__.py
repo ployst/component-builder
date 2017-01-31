@@ -97,10 +97,13 @@ def cli(out=sys.stdout):
     elif arguments['get']:
         tmpl = u"{title}:{attr}"
         for c in components:
+            value = c.ini.get(arguments['<attr>'], "")
+            if isinstance(value, list):
+                value = ','.join(value)
             out.write(
                 tmpl.format(
                     title=c.title,
-                    attr=c.ini.get(arguments['<attr>'], "")) + '\n'
+                    attr=value) + '\n'
             )
 
 

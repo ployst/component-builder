@@ -35,7 +35,8 @@ def get_version(component):
     b = make(
         component.path,
         'version',
-        envs='BUILD_IDENTIFIER={0}'.format(os.environ.get('BUILD_IDENTIFIER', 'test')),
+        envs='BUILD_IDENTIFIER={0}'.format(
+            os.environ.get('BUILD_IDENTIFIER', 'test')),
         options='--silent',
     )
     if b.code != 0:
