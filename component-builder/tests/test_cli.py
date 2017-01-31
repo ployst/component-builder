@@ -46,13 +46,16 @@ class TestCli(unittest.TestCase):
         cli(out=s)
 
         self.assertEqual(
-            s.getvalue(),
-            '\n'.join([
-                'dummy-app:5.4.1',
-                'dummy-integration:2.0.1',
-                'dummy-island-service:1.5.1',
-                ''
-            ])
+            sorted(s.getvalue().split('\n')),
+            [
+                u'',
+                u'dummy-app:5.4.1',
+                u'dummy-foo-integration-builder:2.0.1',
+                u'dummy-foo:1.0.1',
+                u'dummy-integration:2.0.1',
+                u'dummy-island-service:1.5.1',
+
+            ]
         )
 
     @patch('sys.argv', ['compbuild', 'discover', '--all',
@@ -62,12 +65,14 @@ class TestCli(unittest.TestCase):
         cli(out=s)
 
         self.assertEqual(
-            s.getvalue(),
-            '\n'.join([
-                'dummy-app',
-                'dummy-integration',
-                'dummy-island-service',
-                ''
+            sorted(s.getvalue().split('\n')),
+            sorted([
+                u'dummy-app',
+                u'dummy-integration',
+                u'dummy-island-service',
+                u'dummy-foo',
+                u'dummy-foo-integration-builder',
+                u''
             ])
         )
 
@@ -146,7 +151,8 @@ class TestCli(unittest.TestCase):
 
         self.assertEqual(
             open(script_out).read(),
-            "bar dummy-app\nbar dummy-integration\nbar dummy-island-service\n"
+            "bar dummy-app\nbar dummy-island-service\nbar dummy-foo\n"
+            "bar dummy-foo-integration-builder\nbar dummy-integration\n"
         )
 
     @patch('sys.argv', ['compbuild', 'discover', '--vs-branch=master',
