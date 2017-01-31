@@ -198,19 +198,6 @@ class TestCli(unittest.TestCase):
             'dummy-island-service\n'
         )
 
-    @patch('sys.argv', ['compbuild', 'get', 'label', '--all',
-                        '--filter=release-process=docker',
-                        '--filter=label=app',
-                        '--conf={0}'.format(TEST_BUILDER_CONF)])
-    def test_get_ini_value(self):
-        s = StringIO()
-        cli(out=s)
-
-        self.assertEqual(
-            s.getvalue(),
-            'dummy-app:app\n'
-        )
-
 
 class TestCliDeclare(unittest.TestCase):
 
@@ -264,4 +251,32 @@ class TestCliDeclare(unittest.TestCase):
         add_pr.assert_called_once_with(
             'http://github.com/ployst/ployst/pulls/1',
             ['dummy-app']
+        )
+
+
+class TestGetIniValues(unittest.TestCase):
+
+    @patch('sys.argv', ['compbuild', 'get', 'downstream', 'dummy-foo',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    @patch('component_builder.build.github.add_pr_components_labels')
+    def test_get_downstream_components(self, add_pr):
+        s = StringIO()
+        cli(out=s)
+
+        self.assertEqual(
+            s.getvalue(),
+            'dummy-foo:dummy-foo-integration-builder,dummy-integration\n'
+        )
+
+    @patch('sys.argv', ['compbuild', 'get', 'label', '--all',
+                        '--filter=release-process=docker',
+                        '--filter=label=app',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    def test_get_ini_value(self):
+        s = StringIO()
+        cli(out=s)
+
+        self.assertEqual(
+            s.getvalue(),
+            'dummy-app:app\n'
         )

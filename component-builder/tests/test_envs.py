@@ -41,7 +41,8 @@ class TestSetEnvs(unittest.TestCase):
              'DOCKER_TAG=2.0.0.1',
              'DUMMY_APP_DOCKER_IMAGE=dummy-app:5.4.0.1',
              'DUMMY_FOO_DOCKER_IMAGE=dummy-foo:1.0.0.1',
-             'DUMMY_FOO_INTEGRATION_BUILDER_DOCKER_IMAGE=dummy-foo-integration-builder:2.0.0.1',
+             'DUMMY_FOO_INTEGRATION_BUILDER_DOCKER_IMAGE='
+                'dummy-foo-integration-builder:2.0.0.1',
              'NAME=dummy-integration',
              'REPORT_LOCATION=/reports/dummy-integration',
              'VERSION=2.0.0.1']
