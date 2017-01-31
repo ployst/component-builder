@@ -129,9 +129,9 @@ class TestDownstreamLabel(unittest.TestCase):
     def test_upstream_components_have_their_downstream_components(self):
         self.assertEqual(
             self.components['ui'].ini['downstream'],
-            'integration,super-integration')
+            ['integration', 'super-integration'])
 
     def test_downstream_components_dont_have_downstream_components(self):
         self.assertEqual(
             self.components['super-integration'].ini['downstream'],
-            '')
+            [])

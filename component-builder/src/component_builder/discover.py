@@ -30,10 +30,18 @@ def filter_by(selectors, components):
             exclude = True
 
         key, value = selector.split(sep)
+
+        component_value = component.ini.get(key)
         if exclude:
-            return component.ini.get(key) != value
+            if isinstance(component_value, list):
+                return value not in component_value
+            else:
+                return component.ini.get(key) != value
         else:
-            return component.ini.get(key) == value
+            if isinstance(component_value, list):
+                return value in component_value
+            else:
+                return component.ini.get(key) == value
 
     for selector in selectors:
         components = filter(partial(matches_selector, selector), components)

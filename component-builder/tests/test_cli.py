@@ -138,6 +138,22 @@ class TestCli(unittest.TestCase):
             ])
         )
 
+    @patch('sys.argv', ['compbuild', 'discover',
+                        '--all',
+                        '--filter=downstream=dummy-foo-integration-builder',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    def test_discover_filter_by_downstream(self):
+        s = StringIO()
+        cli(out=s)
+
+        self.assertEqual(
+            s.getvalue(),
+            '\n'.join([
+                'dummy-foo',
+                ''
+            ])
+        )
+
     @patch('sys.argv', ['compbuild', 'build', '--all',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_custom_commands(self):
@@ -155,7 +171,9 @@ class TestCli(unittest.TestCase):
             "bar dummy-foo-integration-builder\nbar dummy-integration\n"
         )
 
-    @patch('sys.argv', ['compbuild', 'discover', '--vs-branch=master',
+    @patch('sys.argv', ['compbuild', 'discover',
+                        '--filter=path=dummy-island-service',
+                        '--vs-branch=master',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_discover_only_finds_changes(self):
         s = StringIO()
@@ -166,7 +184,9 @@ class TestCli(unittest.TestCase):
             ''
         )
 
-    @patch('sys.argv', ['compbuild', 'discover', '--vs-branch=master',
+    @patch('sys.argv', ['compbuild', 'discover',
+                        '--filter=path=dummy-island-service',
+                        '--vs-branch=master',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     def test_discover_local_uncommitted_changes_count(self):
         setup_changed_file(self, 'dummy-island-service')
@@ -203,7 +223,8 @@ class TestCliDeclare(unittest.TestCase):
         'INTERACT_WITH_GITHUB': 'anything',
         'PULL_REQUEST_NAMES': 'http://github.com/ployst/ployst/pulls/1',
     })
-    @patch('sys.argv', ['compbuild', 'declare',
+    @patch('sys.argv', ['compbuild', 'declare', 'dummy-app',
+                        'dummy-integration',
                         '--vs-branch=master',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
     @patch('component_builder.build.github.add_pr_components_labels')
