@@ -2,6 +2,7 @@
 # Optional environment variables:
 #   DOCKER_PRE_PUSH:  Command to run before pushing images (e.g. authentication)
 #   STABLE_TAG:       An optional additional tag to add to images to mark them as stable
+set -e
 
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 DOCKER_CMD_AUTHED=${DOCKER_CMD_AUTHED:-"docker"}
