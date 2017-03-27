@@ -18,6 +18,7 @@ Usage:
   compbuild release [<component>...] {common}
   compbuild get <attr> [<component>...] {common}
   compbuild env [<component>...] {common}
+  compbuild <action> [<component>...] {common}
   compbuild -h | --help
   compbuild --version
 
@@ -105,6 +106,13 @@ def cli(out=sys.stdout):
                     title=c.title,
                     attr=value) + '\n'
             )
+    elif arguments['<action>']:
+        b.pre(arguments['<action>'], components)
+        for bash_out in build.run(arguments['<action>'], components,
+                                  make_options="-s"):
+            print(bash_out)
+            out.write(u'{0}'.format(bash_out.value()))
+        b.post(arguments['<action>'], components)
 
 
 if __name__ == '__main__':

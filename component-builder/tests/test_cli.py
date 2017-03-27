@@ -156,7 +156,7 @@ class TestCli(unittest.TestCase):
 
     @patch('sys.argv', ['compbuild', 'build', '--all',
                         '--conf={0}'.format(TEST_BUILDER_CONF)])
-    def test_custom_commands(self):
+    def test_pre_step_scripts(self):
         script_out = '/tmp/foo-out'
         try:
             os.remove(script_out)
@@ -196,6 +196,22 @@ class TestCli(unittest.TestCase):
         self.assertEqual(
             s.getvalue(),
             'dummy-island-service\n'
+        )
+
+    @patch('sys.argv', ['compbuild', 'foo', 'dummy-foo',
+                        '--conf={0}'.format(TEST_BUILDER_CONF)])
+    def test_individual_custom_commands(self):
+        script_out = '/tmp/foo-out'
+        try:
+            os.remove(script_out)
+        except OSError:
+            pass
+
+        cli()
+
+        self.assertEqual(
+            open(script_out).read(),
+            "bar dummy-foo\n"
         )
 
 
