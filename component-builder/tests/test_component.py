@@ -123,6 +123,14 @@ class TestDownstreamLabel(unittest.TestCase):
             [super-integration]
             path=super-integration
             upstream=integration
+
+            [circular-a]
+            path=a
+            upstream=circular-b
+
+            [circular-b]
+            path=b
+            upstream=circular-a
             """))
         cls.components = read_component_configuration(s)
 
@@ -135,3 +143,13 @@ class TestDownstreamLabel(unittest.TestCase):
         self.assertEqual(
             self.components['super-integration'].ini['downstream'],
             [])
+
+    def test_handles_circular_references(self):
+        self.assertEqual(
+            self.components['circular-b'].ini['downstream'],
+            ['circular-a']
+        )
+        self.assertEqual(
+            self.components['circular-a'].ini['downstream'],
+            ['circular-b']
+        )

@@ -30,20 +30,32 @@ class Component(object):
     def env_string(self):
         return convert_dict_to_env_string(self.env)
 
-    def get_upstream_builds(self):
+    def get_upstream_builds(self, exclude=None):
         upstream = []
+        if not exclude:
+            exclude = []
         for ds in self.upstream:
             component = self.all[ds]
+            if component in exclude or component == self:
+                continue
             upstream.append(component)
-            upstream.extend(component.get_upstream_builds())
+            exclude = upstream + [self]
+            upstream.extend(component.get_upstream_builds(exclude=exclude))
         return upstream
 
-    def get_downstream_builds(self):
+    def get_downstream_builds(self, exclude=None):
         downstream = []
+        if not exclude:
+            exclude = []
         for component in self.all.values():
+            if component in exclude or component == self:
+                continue
             if self.title in component.upstream:
                 downstream.append(component)
-                downstream.extend(component.get_downstream_builds())
+                exclude = downstream + [self]
+                downstream.extend(
+                    component.get_downstream_builds(exclude=exclude)
+                )
         return downstream
 
     def __repr__(self):
