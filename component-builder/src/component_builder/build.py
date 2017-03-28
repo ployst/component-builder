@@ -81,7 +81,8 @@ class Builder(object):
         return self.hook('post-{}'.format(stage), components)
 
 
-def run(mode, components, status_callback=None, optional=False):
+def run(mode, components, status_callback=None, optional=False,
+        make_options=""):
     errors = []
 
     for comp in components:
@@ -97,7 +98,9 @@ def run(mode, components, status_callback=None, optional=False):
         success = True
         try:
             b = make(
-                comp.path, mode, envs=comp.env_string, output_console=True)
+                comp.path, mode, envs=comp.env_string, options=make_options,
+                output_console=True)
+
             if b.code != 0:
                 success = False
         except Exception:
@@ -105,6 +108,7 @@ def run(mode, components, status_callback=None, optional=False):
 
         if success:
             mark_commit_status(mode, comp_name, 'success')
+            yield b
         else:
             errors.append(comp_name)
             mark_commit_status(mode, comp_name, 'error')
