@@ -84,7 +84,7 @@ class Builder(object):
 def run(mode, components, status_callback=None, optional=False,
         make_options=""):
     errors = []
-
+    bashes = []
     for comp in components:
         mark_commit_status(mode, comp.title, 'pending')
 
@@ -103,15 +103,17 @@ def run(mode, components, status_callback=None, optional=False,
 
             if b.code != 0:
                 success = False
+            bashes.append(b)
         except Exception:
             success = False
 
         if success:
             mark_commit_status(mode, comp_name, 'success')
-            yield b
         else:
             errors.append(comp_name)
             mark_commit_status(mode, comp_name, 'error')
 
     if errors:
         raise BuilderFailure(mode, errors)
+
+    return bashes
