@@ -124,13 +124,16 @@ class TestDownstreamLabel(unittest.TestCase):
             path=super-integration
             upstream=integration
 
+            [other-thing]
+            path=other-thing
+
             [circular-a]
             path=a
             upstream=circular-b
 
             [circular-b]
             path=b
-            upstream=circular-a
+            upstream=other-thing,circular-a
             """))
         cls.components = read_component_configuration(s)
 

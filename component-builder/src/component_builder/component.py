@@ -36,10 +36,10 @@ class Component(object):
             exclude = []
         for ds in self.upstream:
             component = self.all[ds]
-            if component in exclude or component == self:
+            if component in exclude or component.title == self.title:
                 continue
             upstream.append(component)
-            exclude = upstream + [self]
+            exclude = exclude + upstream + [self]
             upstream.extend(component.get_upstream_builds(exclude=exclude))
         return upstream
 
@@ -48,14 +48,15 @@ class Component(object):
         if not exclude:
             exclude = []
         for component in self.all.values():
-            if component in exclude or component == self:
+            if component in exclude or component.title == self.title:
                 continue
             if self.title in component.upstream:
                 downstream.append(component)
-                exclude = downstream + [self]
+                exclude = exclude + downstream + [self]
                 downstream.extend(
                     component.get_downstream_builds(exclude=exclude)
                 )
+
         return downstream
 
     def __repr__(self):
