@@ -35,11 +35,12 @@ Options:
                        component.
   --exclude-downstream  Only include directly changed things, not things that
                         declare them as upstreams.
+  --out=FILE           Write make command output to FILE rather than stdout.
 
 
 """.format(
     common=('[--vs-branch=BRANCH] [--all] [--exclude-downstream] '
-            '[--filter=SELECTOR ...] [--conf=FILE]')
+            '[--filter=SELECTOR ...] [--conf=FILE] [--out=FILE]')
 )
 
 
@@ -48,6 +49,9 @@ def cli(out=sys.stdout):
 
     b = build.Builder(arguments['--conf'])
     b.configure()
+    # out = sys.stdout
+    if arguments['--out']:
+        out = open(arguments['--out'], 'w')
 
     selectors = set()
     filters = arguments['--filter']
@@ -108,12 +112,13 @@ def cli(out=sys.stdout):
             )
     elif arguments['<action>']:
         b.pre(arguments['<action>'], components)
-        for bash_out in build.run(arguments['<action>'], components,
-                                  make_options="-s"):
-            print(bash_out)
-            out.write(u'{0}'.format(bash_out.value()))
+        build.run(arguments['<action>'], components, make_options="-s",
+                  make_output={'stdout': out, 'stderr': sys.stderr})
         b.post(arguments['<action>'], components)
 
+    if arguments['--out']:
+        print "CLOSING"
+        out.close()
 
 if __name__ == '__main__':
     cli()

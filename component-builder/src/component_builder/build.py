@@ -1,4 +1,5 @@
 import os.path
+import sys
 
 from . import config, github
 from .utils import component_script, make
@@ -67,7 +68,7 @@ class Builder(object):
                     comp.path,
                     script_path,
                     envs=comp.env_string,
-                    output_console=False
+                    # output_console=False
                 )
                 if b.code != 0:
                     errors.append(comp.title)
@@ -82,7 +83,7 @@ class Builder(object):
 
 
 def run(mode, components, status_callback=None, optional=False,
-        make_options=""):
+        make_options="", make_output=None):
     errors = []
     bashes = []
     for comp in components:
@@ -96,11 +97,14 @@ def run(mode, components, status_callback=None, optional=False,
             print("Not available")
             continue
         success = True
+        if not make_output:
+            # Ignore if running --xunit tests (identified by use of Tee)
+            if sys.stdout.__class__.__name__ != 'Tee':
+                make_output = {'stdout': sys.stdout, 'stderr': sys.stderr}
         try:
             b = make(
                 comp.path, mode, envs=comp.env_string, options=make_options,
-                output_console=True)
-
+                output=make_output)
             if b.code != 0:
                 success = False
             bashes.append(b)

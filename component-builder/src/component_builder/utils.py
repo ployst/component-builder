@@ -20,21 +20,19 @@ def convert_dict_to_env_string(envdict):
     return env_string
 
 
-def make(path, cmd, envs="", options="", output_console=False):
+def make(path, cmd, envs="", options="", output=None):
     cmd = 'make {0} {1}'.format(options, cmd)
     return component_script(
-        path=path, script=cmd, envs=envs, output_console=output_console
+        path=path, script=cmd, envs=envs, output=output
     )
 
 
-def component_script(path, script, envs="", output_console=False):
+def component_script(path, script, envs="", output=None):
     full_cmd = 'cd {path} && {envs} {0}'.format(
         script, path=path, envs=envs)
     bashkw = {}
 
-    if output_console:
-        # Ignore if running --xunit tests (identified by use of Tee)
-        if sys.stdout.__class__.__name__ != 'Tee':
-            bashkw = {'stdout': sys.stdout, 'stderr': sys.stderr}
+    if output:
+        bashkw = output
 
     return bash(full_cmd, **bashkw)
