@@ -1,5 +1,3 @@
-import sys
-
 from bash import bash as bash_graceful
 
 

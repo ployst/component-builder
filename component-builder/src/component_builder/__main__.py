@@ -44,12 +44,12 @@ Options:
 )
 
 
-def cli(out=sys.stdout):
+def cli(out=sys.stdout, err=sys.stderr):
     arguments = docopt(USAGE, version='1.0')
 
     b = build.Builder(arguments['--conf'])
     b.configure()
-    # out = sys.stdout
+
     if arguments['--out']:
         out = open(arguments['--out'], 'w')
 
@@ -113,12 +113,12 @@ def cli(out=sys.stdout):
     elif arguments['<action>']:
         b.pre(arguments['<action>'], components)
         build.run(arguments['<action>'], components, make_options="-s",
-                  make_output={'stdout': out, 'stderr': sys.stderr})
+                  make_output={'stdout': out, 'stderr': err})
         b.post(arguments['<action>'], components)
 
     if arguments['--out']:
-        print "CLOSING"
         out.close()
+
 
 if __name__ == '__main__':
     cli()
