@@ -55,6 +55,7 @@ def run(components, component_names=None, get_all=False, compare_branch=None,
     if component_names and get_all:
         print("Asked for specific components and get all. "
               "Assuming specific components...")
+
     if component_names:
         candidates = [components[x] for x in component_names]
     else:
