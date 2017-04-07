@@ -83,11 +83,12 @@ class Builder(object):
 
 
 def run(mode, components, status_callback=None, optional=False,
-        make_options="", make_output=None):
+        make_options="", make_output=None, github_status_name=None):
     errors = []
     bashes = []
+    github_status_name = github_status_name or mode
     for comp in components:
-        mark_commit_status(mode, comp.title, 'pending')
+        mark_commit_status(github_status_name, comp.title, 'pending')
 
     for comp in components:
         comp_name = comp.title
@@ -112,10 +113,10 @@ def run(mode, components, status_callback=None, optional=False,
             success = False
 
         if success:
-            mark_commit_status(mode, comp_name, 'success')
+            mark_commit_status(github_status_name, comp_name, 'success')
         else:
             errors.append(comp_name)
-            mark_commit_status(mode, comp_name, 'error')
+            mark_commit_status(github_status_name, comp_name, 'error')
 
     if errors:
         raise BuilderFailure(mode, errors)
