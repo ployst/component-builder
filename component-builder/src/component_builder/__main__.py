@@ -33,14 +33,18 @@ Options:
   --vs-branch=BRANCH   Discover changes made compared to BRANCH. If not set,
                        comparison will be to latest staging branch for each
                        component.
-  --exclude-downstream  Only include directly changed things, not things that
-                        declare them as upstreams.
-  --out=FILE           Write make command output to FILE rather than stdout.
+  --exclude-downstream        Only include directly changed things, not things
+                              that declare them as upstreams.
+  --out=FILE                  Write make command output to FILE rather than
+                              stdout.
+  --github-status-name=NAME   The name/description to use as the commit status.
+                              Defaults to "<command>".
 
 
 """.format(
     common=('[--vs-branch=BRANCH] [--all] [--exclude-downstream] '
-            '[--filter=SELECTOR ...] [--conf=FILE] [--out=FILE]')
+            '[--filter=SELECTOR ...] [--conf=FILE] [--out=FILE] '
+            '[--github-status-name=NAME]')
 )
 
 
@@ -81,11 +85,17 @@ def cli(out=sys.stdout, err=sys.stderr):
         build.declare_components_usage(components)
     elif arguments['build']:
         b.pre('build', components)
-        build.run('build', components)
+        build.run(
+            'build', components,
+            github_status_name=arguments['--github-status-name']
+        )
         b.post('build', components)
     elif arguments['test']:
         b.pre('test', components)
-        build.run('test', components)
+        build.run(
+            'test', components,
+            github_status_name=arguments['--github-status-name']
+        )
         b.post('test', components)
     elif arguments['tag']:
         for comp in components:
@@ -113,7 +123,8 @@ def cli(out=sys.stdout, err=sys.stderr):
     elif arguments['<action>']:
         b.pre(arguments['<action>'], components)
         build.run(arguments['<action>'], components, make_options="-s",
-                  make_output={'stdout': out, 'stderr': err})
+                  make_output={'stdout': out, 'stderr': err},
+                  github_status_name=arguments['--github-status-name'])
         b.post(arguments['<action>'], components)
 
     if arguments['--out']:
