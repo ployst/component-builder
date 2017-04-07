@@ -27,9 +27,14 @@ def print_message(msg):
     print(msg)
 
 
-def mark_commit_status(*args, **kwargs):
+def mark_commit_status(mode, component_name, status, github_status_name):
     if os.environ.get('INTERACT_WITH_GITHUB'):
-        return github.mark_status_for_component(*args, **kwargs)
+        title = github_status_name or 'builder-{0}-{1}'.format(
+            component_name, mode)
+        description = "{0}: {1}".format(
+            component_name, github_status_name or mode)
+        return github.mark_status_for_component(
+            title, description, component_name, status)
 
 
 def declare_components_usage(components):
@@ -86,9 +91,8 @@ def run(mode, components, status_callback=None, optional=False,
         make_options="", make_output=None, github_status_name=None):
     errors = []
     bashes = []
-    github_status_name = github_status_name or mode
     for comp in components:
-        mark_commit_status(github_status_name, comp.title, 'pending')
+        mark_commit_status(mode, comp.title, 'pending', github_status_name)
 
     for comp in components:
         comp_name = comp.title
@@ -113,10 +117,11 @@ def run(mode, components, status_callback=None, optional=False,
             success = False
 
         if success:
-            mark_commit_status(github_status_name, comp_name, 'success')
+            mark_commit_status(
+                mode, comp_name, 'success', github_status_name)
         else:
             errors.append(comp_name)
-            mark_commit_status(github_status_name, comp_name, 'error')
+            mark_commit_status(mode, comp_name, 'error', github_status_name)
 
     if errors:
         raise BuilderFailure(mode, errors)
