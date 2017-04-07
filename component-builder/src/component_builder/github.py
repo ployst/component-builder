@@ -17,20 +17,19 @@ def get_repo():
     )
 
 
-def mark_status_for_component(mode, component_name, status):
+def mark_status_for_component(title, description, component_name, status):
     """
     Requires a token that has repo level access.
     """
     sha = get_sha()
     target_url = os.environ['BUILD_URL']
-    description = "{0}: {1}".format(mode, component_name)
     repo = get_repo()
     repo.create_status(
         sha=sha,
         state=status,
         description=description,
         target_url=target_url,
-        context='builder-{0}-{1}'.format(component_name, mode))
+        context=title)
 
 
 def get_now():
