@@ -42,17 +42,22 @@ def create_tag(tag):
     date_now = get_now()
 
     repo = get_repo()
-    repo.create_tag(
-        tag=tag,
-        message='Autotag',
-        sha=sha,
-        obj_type='commit',
-        tagger={
-            "name": "Component Builder ",
-            "email": os.environ['GIT_TAGGER_EMAIL'],
-            "date": date_now
-        }
-    )
+    try:
+        repo.create_tag(
+            tag=tag,
+            message='Autotag',
+            sha=sha,
+            obj_type='commit',
+            tagger={
+                "name": "Component Builder ",
+                "email": os.environ['GIT_TAGGER_EMAIL'],
+                "date": date_now
+            }
+        )
+    except github3.exceptions.UnprocessableEntity as e:
+        if "Reference already exists" in str(e):
+            return
+        raise
 
 
 def update_branch(branch_name):
