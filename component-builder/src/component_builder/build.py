@@ -65,6 +65,11 @@ class Builder(object):
 
     def hook(self, hook_name, components):
         script_name = self.config['hooks'].get(hook_name)
+        output = None
+        # Ignore if running --xunit tests (identified by use of Tee)
+        if sys.stdout.__class__.__name__ != 'Tee':
+            output = {'stdout': sys.stdout, 'stderr': sys.stderr}
+
         if script_name:
             errors = []
             script_path = os.path.abspath(os.path.join(self.path, script_name))
@@ -73,7 +78,7 @@ class Builder(object):
                     comp.path,
                     script_path,
                     envs=comp.env_string,
-                    # output_console=False
+                    output=output,
                 )
                 if b.code != 0:
                     errors.append(comp.title)
