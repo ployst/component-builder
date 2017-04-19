@@ -1,15 +1,53 @@
+import subprocess
+import sys
+
 from bash import bash as bash_graceful
+
+from . import exceptions
 
 
 class bash(bash_graceful):
-    def bash(self, cmd, *args, **kwargs):
-        ret = super(bash, self).bash(cmd, *args, **kwargs)
-        if self.code != 0:
 
-            raise Exception('Error running command {0}:\n{1}'.format(
-                cmd, self.stderr)
-            )
+    def bash_with_captured_and_potentially_exposed_output(
+            self, cmd, *args, **kwargs):
+        stdout = kwargs.get('stdout', None)
+        stderr = kwargs.get('stderr', None)
+        kwargs['stdout'] = subprocess.PIPE
+        kwargs['stderr'] = subprocess.PIPE
+        kwargs['sync'] = False
+
+        ret = super(bash, self).bash(cmd, *args, **kwargs)
+        output_out = []
+
+        while True:
+
+            outline = ret.p.stdout.readline()
+            outline = outline.decode('utf_8')
+
+            if not outline:
+                break
+
+            output_out.append(outline)
+            if stdout:
+                stdout.write(outline)
+
+        self.stdout = ''.join(output_out)
+        self.stderr = ret.p.stderr.read().decode('utf_8')
+        if stderr:
+            stderr.write(self.stderr)
+        self.code = ret.p.wait()
+
+        if ret.code != 0:
+            raise exceptions.SubscriptException(
+                ret, cmd, ''.join(ret.stderr))
+
         return ret
+
+    def bash(self, cmd, *args, **kwargs):
+        return self.bash_with_captured_and_potentially_exposed_output(
+            cmd, *args, **kwargs
+        )
+
 
 
 def convert_dict_to_env_string(envdict):

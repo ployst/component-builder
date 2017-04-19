@@ -3,7 +3,7 @@ import sys
 
 from docopt import docopt
 
-from . import build, discover, envs, github, release
+from . import build, discover, envs, exceptions, github, release
 
 USAGE = """
 Intelligent builder for working with component-based repositories
@@ -72,60 +72,68 @@ def cli(out=sys.stdout, err=sys.stderr):
         include_downstream=not arguments['--exclude-downstream']
     )
     envs.set_envs(components)
-
-    if arguments['discover']:
-        tmpl = u"{title}"
-        if arguments['--with-versions']:
-            tmpl += u':{version}'
-        for c in components:
-            out.write(
-                tmpl.format(title=c.title, version=c.env['VERSION']) + '\n'
+    try:
+        if arguments['discover']:
+            tmpl = u"{title}"
+            if arguments['--with-versions']:
+                tmpl += u':{version}'
+            for c in components:
+                out.write(
+                    tmpl.format(title=c.title, version=c.env['VERSION']) + '\n'
+                )
+        elif arguments['declare']:
+            build.declare_components_usage(components)
+        elif arguments['build']:
+            b.pre('build', components)
+            build.run(
+                'build', components,
+                github_status_name=arguments['--github-status-name']
             )
-    elif arguments['declare']:
-        build.declare_components_usage(components)
-    elif arguments['build']:
-        b.pre('build', components)
-        build.run(
-            'build', components,
-            github_status_name=arguments['--github-status-name']
-        )
-        b.post('build', components)
-    elif arguments['test']:
-        b.pre('test', components)
-        build.run(
-            'test', components,
-            github_status_name=arguments['--github-status-name']
-        )
-        b.post('test', components)
-    elif arguments['tag']:
-        for comp in components:
-            github.create_tag("{0}-{1}".format(
-                comp.title, comp.env['VERSION'])
+            b.post('build', components)
+        elif arguments['test']:
+            b.pre('test', components)
+            build.run(
+                'test', components,
+                github_status_name=arguments['--github-status-name']
             )
-    elif arguments['label']:
-        for comp in components:
-            github.update_branch(comp.branch_name(arguments['<label>']))
-    elif arguments['release']:
-        release.run(components)
-    elif arguments['env']:
-        out.write("\n".join(json.dumps(c.env, indent=4) for c in components))
-    elif arguments['get']:
-        tmpl = u"{title}:{attr}"
-        for c in components:
-            value = c.ini.get(arguments['<attr>'], "")
-            if isinstance(value, list):
-                value = ','.join(value)
-            out.write(
-                tmpl.format(
-                    title=c.title,
-                    attr=value) + '\n'
+            b.post('test', components)
+        elif arguments['tag']:
+            for comp in components:
+                github.create_tag("{0}-{1}".format(
+                    comp.title, comp.env['VERSION'])
+                )
+        elif arguments['label']:
+            for comp in components:
+                github.update_branch(comp.branch_name(arguments['<label>']))
+        elif arguments['release']:
+            release.run(components)
+        elif arguments['env']:
+            out.write("\n".join(
+                json.dumps(c.env, indent=4) for c in components)
             )
-    elif arguments['<action>']:
-        b.pre(arguments['<action>'], components)
-        build.run(arguments['<action>'], components, make_options="-s",
-                  make_output={'stdout': out, 'stderr': err},
-                  github_status_name=arguments['--github-status-name'])
-        b.post(arguments['<action>'], components)
+        elif arguments['get']:
+            tmpl = u"{title}:{attr}"
+            for c in components:
+                value = c.ini.get(arguments['<attr>'], "")
+                if isinstance(value, list):
+                    value = ','.join(value)
+                out.write(
+                    tmpl.format(
+                        title=c.title,
+                        attr=value) + '\n'
+                )
+        elif arguments['<action>']:
+            b.pre(arguments['<action>'], components)
+            build.run(arguments['<action>'], components, make_options="-s",
+                      make_output={'stdout': out, 'stderr': err},
+                      github_status_name=arguments['--github-status-name'])
+            b.post(arguments['<action>'], components)
+    except exceptions.SubscriptException as e:
+        print("FAILURE: {0}\n".format(e))
+        sys.exit(1)
+    except exceptions.BuilderFailure as e:
+        print("FAILURE: {0}\n".format(e))
+        sys.exit(1)
 
     if arguments['--out']:
         out.close()

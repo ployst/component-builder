@@ -1,21 +1,8 @@
 import os.path
 import sys
 
-from . import config, github
+from . import config, exceptions, github
 from .utils import component_script, make
-
-
-class BuilderFailure(Exception):
-    def __init__(self, mode, errors):
-        super(BuilderFailure, self).__init__()
-        self.error_components = errors
-        self.mode = mode
-
-    def __str__(self):
-        comps = ", ".join(self.error_components)
-        return ('{0} components failed to {1}: {2}'.format(
-            len(self.error_components), self.mode, comps)
-        )
 
 
 def print_message(msg):
@@ -115,20 +102,17 @@ def run(mode, components, status_callback=None, optional=False,
             b = make(
                 comp.path, mode, envs=comp.env_string, options=make_options,
                 output=make_output)
-            if b.code != 0:
-                success = False
             bashes.append(b)
-        except Exception:
+        except exceptions.SubscriptException as e:
             success = False
+            errors.append((comp_name, e.output))
+            mark_commit_status(mode, comp_name, 'error', github_status_name)
 
         if success:
             mark_commit_status(
                 mode, comp_name, 'success', github_status_name)
-        else:
-            errors.append(comp_name)
-            mark_commit_status(mode, comp_name, 'error', github_status_name)
 
     if errors:
-        raise BuilderFailure(mode, errors)
+        raise exceptions.BuilderFailure(mode, errors)
 
     return bashes
