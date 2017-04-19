@@ -61,16 +61,17 @@ class Builder(object):
             errors = []
             script_path = os.path.abspath(os.path.join(self.path, script_name))
             for comp in components:
-                b = component_script(
-                    comp.path,
-                    script_path,
-                    envs=comp.env_string,
-                    output=output,
-                )
-                if b.code != 0:
-                    errors.append(comp.title)
+                try:
+                    component_script(
+                        comp.path,
+                        script_path,
+                        envs=comp.env_string,
+                        output=output,
+                    )
+                except exceptions.SubscriptException as e:
+                    errors.append((comp.title, e.output))
             if errors:
-                raise BuilderFailure(script_name, errors)
+                raise exceptions.BuilderFailure(script_name, errors)
 
     def pre(self, stage, components):
         return self.hook('pre-{}'.format(stage), components)

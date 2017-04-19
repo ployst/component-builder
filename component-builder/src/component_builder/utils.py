@@ -1,5 +1,4 @@
 import subprocess
-import sys
 
 from bash import bash as bash_graceful
 
@@ -22,32 +21,31 @@ class bash(bash_graceful):
         while True:
 
             outline = ret.p.stdout.readline()
-            outline = outline.decode('utf_8')
+            outline = outline
 
             if not outline:
                 break
 
             output_out.append(outline)
             if stdout:
-                stdout.write(outline)
+                stdout.write(outline.decode('utf_8'))
 
-        self.stdout = ''.join(output_out)
-        self.stderr = ret.p.stderr.read().decode('utf_8')
+        self.stdout = b''.join(output_out)
+        self.stderr = ret.p.stderr.read()
         if stderr:
-            stderr.write(self.stderr)
+            stderr.write(self.stderr.decode('utf_8'))
         self.code = ret.p.wait()
 
-        if ret.code != 0:
+        if self.code != 0:
             raise exceptions.SubscriptException(
-                ret, cmd, ''.join(ret.stderr))
+                self, cmd, ''.join(self.stderr))
 
-        return ret
+        return self
 
     def bash(self, cmd, *args, **kwargs):
         return self.bash_with_captured_and_potentially_exposed_output(
             cmd, *args, **kwargs
         )
-
 
 
 def convert_dict_to_env_string(envdict):

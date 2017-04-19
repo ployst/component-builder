@@ -19,7 +19,6 @@ class BuilderFailure(Exception):
 
         comps = ", ".join([': '.join(ec) for ec in self.error_components])
 
-        return ('{0} components failed to {1}: \n'
-                ' - {2}'.format(
+        return ('{0} components failed to {1}: \n - {2}'.format(
             len(self.error_components), self.mode, comps)
         )
