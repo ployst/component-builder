@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 from bash import bash as bash_graceful
 
@@ -7,45 +8,24 @@ from . import exceptions
 
 class bash(bash_graceful):
 
-    def bash_with_captured_and_potentially_exposed_output(
-            self, cmd, *args, **kwargs):
+    def bash(self, cmd, *args, **kwargs):
         stdout = kwargs.get('stdout', None)
         stderr = kwargs.get('stderr', None)
         kwargs['stdout'] = subprocess.PIPE
         kwargs['stderr'] = subprocess.PIPE
-        kwargs['sync'] = False
 
         ret = super(bash, self).bash(cmd, *args, **kwargs)
-        output_out = []
 
-        while True:
-
-            outline = ret.p.stdout.readline()
-            outline = outline
-
-            if not outline:
-                break
-
-            output_out.append(outline)
-            if stdout:
-                stdout.write(outline.decode('utf_8'))
-
-        self.stdout = b''.join(output_out)
-        self.stderr = ret.p.stderr.read()
-        if stderr:
-            stderr.write(self.stderr.decode('utf_8'))
-        self.code = ret.p.wait()
+        if stdout and stdout != sys.stdout:
+            stdout.write(ret.stdout.decode('utf_8'))
+        if stderr and stderr != sys.stderr:
+            stderr.write(ret.stderr.decode('utf_8'))
 
         if self.code != 0:
             raise exceptions.SubscriptException(
-                self, cmd, ''.join(self.stderr))
+                self, cmd, ret.stderr.decode('utf_8'))
 
-        return self
-
-    def bash(self, cmd, *args, **kwargs):
-        return self.bash_with_captured_and_potentially_exposed_output(
-            cmd, *args, **kwargs
-        )
+        return ret
 
 
 def convert_dict_to_env_string(envdict):
