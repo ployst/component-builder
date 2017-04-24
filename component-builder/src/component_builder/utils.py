@@ -9,15 +9,11 @@ from . import exceptions
 class bash(bash_graceful):
 
     def bash(self, cmd, *args, **kwargs):
-        stdout = kwargs.get('stdout', None)
         stderr = kwargs.get('stderr', None)
-        kwargs['stdout'] = subprocess.PIPE
         kwargs['stderr'] = subprocess.PIPE
 
         ret = super(bash, self).bash(cmd, *args, **kwargs)
 
-        if stdout and stdout != sys.stdout:
-            stdout.write(ret.stdout.decode('utf_8'))
         if stderr and stderr != sys.stderr:
             stderr.write(ret.stderr.decode('utf_8'))
 
