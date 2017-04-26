@@ -3,12 +3,12 @@ from .component import Tree
 from .utils import bash
 
 
-def get_changed(candidates, branch=None):
+def get_changed(candidates, sha=None):
 
     def is_changed(candidate):
-        name = branch or candidate.branch_name('stable')
+        name = sha or candidate.branch_name('stable')
         git_differs = [
-            'git diff --shortstat origin/{branch}...'.format(branch=name),
+            'git diff --shortstat {sha}...'.format(sha=name),
             'git diff HEAD'
         ]
         for differ in git_differs:
@@ -49,7 +49,7 @@ def filter_by(selectors, components):
     return list(components)
 
 
-def run(components, component_names=None, get_all=False, compare_branch=None,
+def run(components, component_names=None, get_all=False, compare_with=None,
         selectors=None, include_downstream=True):
     "Get paths and titles of changed components"
     if component_names and get_all:
@@ -61,7 +61,7 @@ def run(components, component_names=None, get_all=False, compare_branch=None,
     else:
         candidates = components.values()
         if not get_all:
-            candidates = get_changed(candidates, compare_branch)
+            candidates = get_changed(candidates, compare_with)
 
         candidates = Tree.ordered(candidates, include_downstream)
 

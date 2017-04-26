@@ -24,7 +24,7 @@ class Component(object):
         self.ini = ini
 
     def branch_name(self, label='stable'):
-        return "{0}-{1}".format(label, self.title)
+        return "origin/{0}-{1}".format(label, self.title)
 
     @property
     def env_string(self):
