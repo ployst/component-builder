@@ -17,4 +17,4 @@ release:
 	bash adi/release.sh
 
 version:
-	echo "1.0.${BUILD_IDENTIFIER}"
+	echo "1.1.${BUILD_IDENTIFIER}"
