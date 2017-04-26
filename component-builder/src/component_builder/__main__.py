@@ -32,7 +32,8 @@ Options:
   --with-versions      Print out all items of interest, with versions
   --vs-branch=BRANCH   Discover changes made compared to BRANCH. If not set,
                        comparison will be to latest staging branch for each
-                       component.
+                       component. Should be in the form `origin/master`. Can
+                       also be a commit id to compare against.
   --exclude-downstream        Only include directly changed things, not things
                               that declare them as upstreams.
   --out=FILE                  Write make command output to FILE rather than
@@ -67,7 +68,7 @@ def cli(out=sys.stdout, err=sys.stderr):
         b.components,
         arguments.get('<component>', []),
         arguments['--all'],
-        compare_branch=arguments['--vs-branch'],
+        compare_with=arguments['--vs-branch'],
         selectors=selectors,
         include_downstream=not arguments['--exclude-downstream']
     )
