@@ -6,7 +6,7 @@ from .utils import bash
 def get_changed(candidates, sha=None):
 
     def is_changed(candidate):
-        name = sha or candidate.branch_name('stable')
+        name = sha or 'origin/' + candidate.branch_name('stable')
         git_differs = [
             'git diff --shortstat {sha}...'.format(sha=name),
             'git diff HEAD'
