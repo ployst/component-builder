@@ -169,6 +169,10 @@ GITHUB_PROJECT_REPONAME
     Project to access (eg for https://github.com/example/foo this would be
     `foo`)
 
+GITHUB_URL (optional)
+    If you use Github Enterprise, set this to your correct Github URL.
+    Else, compbuild will default to use github.com.
+
 GIT_TAGGER_EMAIL
     The email address to assign the author of tags to.
 

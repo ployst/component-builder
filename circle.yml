@@ -33,7 +33,7 @@ dependencies:
     - compbuild declare
     - compbuild build
   post:
-    - pyenv local 2.7.10 3.5.2
+    - pyenv local 2.7.10 3.5.2 3.6.2
 
 test:
   override:

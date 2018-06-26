@@ -10,7 +10,12 @@ def get_sha():
 
 
 def get_repo():
-    gh = github3.login(token=os.environ.get('GITHUB_AUTH_TOKEN'))
+    url = os.environ.get('GITHUB_URL')
+    token = os.environ.get('GITHUB_AUTH_TOKEN')
+    if url:
+        gh = github3.github.GitHubEnterprise(url=url, token=token)
+    else:
+        gh = github3.login(token=token)
     return gh.repository(
         os.environ.get('GITHUB_PROJECT_USERNAME'),
         os.environ.get('GITHUB_PROJECT_REPONAME')
