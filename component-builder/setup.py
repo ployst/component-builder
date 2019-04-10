@@ -37,7 +37,7 @@ setup(
     install_requires=[
         'bash>=0.5',
         'docopt',
-        'github3.py>=1.0.0a3',
+        'github3.py>=1.0.0',
         'pytz>=2015.4'
     ],
     scripts=[
