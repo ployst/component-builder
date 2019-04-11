@@ -3,6 +3,8 @@ import unittest
 import six
 from mock import Mock, patch
 
+import github3
+
 from component_builder import github
 
 
@@ -62,3 +64,38 @@ class TestAddPRComponentsLabels(unittest.TestCase):
         issue.add_labels.assert_called_once_with('component:library')
         self.assertEqual(len(repo.method_calls), 1)
         self.assertEqual(len(issue.method_calls), 3)
+
+
+class TestUpdateBranch(unittest.TestCase):
+
+    @patch('component_builder.github.get_sha')
+    @patch('component_builder.github.get_repo')
+    def test_forces_update_on_existing_branch(self, get_repo, get_sha):
+        ref_mock = Mock()
+        repo = Mock()
+        repo.ref.return_value = ref_mock
+        get_repo.return_value = repo
+        branch_name = 'some-branch'
+        sha = 'some-sha'
+        get_sha.return_value = sha
+
+        github.update_branch(branch_name)
+
+        repo.ref.assert_called_once_with('heads/{0}'.format(branch_name))
+        ref_mock.update.assert_called_once_with(sha, force=True)
+
+    @patch('component_builder.github.get_sha')
+    @patch('component_builder.github.get_repo')
+    def test_creates_missing_branch(self, get_repo, get_sha):
+        repo = Mock()
+        repo.ref.side_effect = github3.exceptions.NotFoundError(Mock())
+        get_repo.return_value = repo
+        branch_name = 'some-branch'
+        sha = 'some-sha'
+        get_sha.return_value = sha
+
+        github.update_branch(branch_name)
+
+        repo.ref.assert_called_once_with('heads/{0}'.format(branch_name))
+        repo.create_ref.assert_called_once_with(
+            'refs/heads/{0}'.format(branch_name), sha)
